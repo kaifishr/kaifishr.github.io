@@ -1,0 +1,28 @@
+I"ê<h1 id="this-is-a-headline">This is a headline</h1>
+
+<p>This is some text</p>
+
+<p>This is a code snippet:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="c1"># prints 0, 1, 2, ..., 9 to stdout</span></code></pre></figure>
+
+<p>Check out <a href="https://github.com/KaiFabi/VanillaGeneticClassifier">this post</a> for more info on how to train a neural network using a genetic algorithm.</p>
+
+<p>This is an image, right?</p>
+
+<p><img src="/assets/images/tux.png" alt="Here comes an image" /></p>
+
+<!-- 
+you can download my CV [here](/assets/cv.pdf)
+![A useful image](http://localhost:4000/assets/cat.jpg)
+<p align="center"><img src="/assets/cat.jpg" width="100"></p>
+<img align="text-align:center" src="/assets/cat.jpg" width="100">
+-->
+
+<p>This is an image from a link</p>
+
+<p><img src="https://raw.githubusercontent.com/KaiFabi/VanillaGeneticClassifier/master/results/fmnist_eval_accuracy.png" alt="Some graph" /></p>
+
+:ET
