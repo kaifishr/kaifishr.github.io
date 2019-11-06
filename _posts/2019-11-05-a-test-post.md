@@ -7,7 +7,7 @@ tags: [howto]
 
 # This is a headline
 
-This is some text
+This is some text ...
 
 This is a code snippet:
 
