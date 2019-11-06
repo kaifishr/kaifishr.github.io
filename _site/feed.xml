@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-11-06T15:55:12+01:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Kai Fabi</title><subtitle>Fun with neural networks and more. I basically brain dump here anything that comes to my mind.</subtitle><author><name>Kai Fabi</name></author><entry><title type="html">A test post</title><link href="http://localhost:4000/this%20and%20that/stuff/2019/11/05/a-test-post.html" rel="alternate" type="text/html" title="A test post" /><published>2019-11-05T00:00:00+01:00</published><updated>2019-11-05T00:00:00+01:00</updated><id>http://localhost:4000/this%20and%20that/stuff/2019/11/05/a-test-post</id><content type="html" xml:base="http://localhost:4000/this%20and%20that/stuff/2019/11/05/a-test-post.html">&lt;h1 id=&quot;this-is-a-headline&quot;&gt;This is a headline&lt;/h1&gt;
+
+&lt;p&gt;This is some text&lt;/p&gt;
+
+&lt;p&gt;This is a code snippet:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# prints 0, 1, 2, ..., 9 to stdout&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Check out &lt;a href=&quot;https://github.com/KaiFabi/VanillaGeneticClassifier&quot;&gt;this post&lt;/a&gt; for more info on how to train a neural network using a genetic algorithm.&lt;/p&gt;
+
+&lt;p&gt;This is an image, right?&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/tux.png&quot; alt=&quot;Here comes an image&quot; /&gt;&lt;/p&gt;
+
+&lt;!-- 
+you can download my CV [here](/assets/cv.pdf)
+![A useful image](http://localhost:4000/assets/cat.jpg)
+&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;/assets/cat.jpg&quot; width=&quot;100&quot;&gt;&lt;/p&gt;
+&lt;img align=&quot;text-align:center&quot; src=&quot;/assets/cat.jpg&quot; width=&quot;100&quot;&gt;
+--&gt;
+
+&lt;p&gt;This is an image from a link&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/KaiFabi/VanillaGeneticClassifier/master/results/fmnist_eval_accuracy.png&quot; alt=&quot;Some graph&quot; /&gt;&lt;/p&gt;</content><author><name>Kai Fabi</name></author><category term="howto" /><summary type="html">This is a headline</summary></entry><entry><title type="html">This post demonstrates post content styles</title><link href="http://localhost:4000/junk/2019/11/05/styles.html" rel="alternate" type="text/html" title="This post demonstrates post content styles" /><published>2019-11-05T00:00:00+01:00</published><updated>2019-11-05T00:00:00+01:00</updated><id>http://localhost:4000/junk/2019/11/05/styles</id><content type="html" xml:base="http://localhost:4000/junk/2019/11/05/styles.html">&lt;p&gt;Some text …&lt;/p&gt;
+
+&lt;h2 id=&quot;heading&quot;&gt;heading&lt;/h2&gt;
+
+&lt;h3 id=&quot;subheadin&quot;&gt;subheadin&lt;/h3&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Well, this is a quote.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Some C code&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;%d&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;a-sub-subheading&quot;&gt;A sub-subheading&lt;/h4&gt;
+
+&lt;h3 id=&quot;an-unordered-list&quot;&gt;An unordered list&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;First item, yo&lt;/li&gt;
+  &lt;li&gt;Second item, dawg&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;an-ordered-list&quot;&gt;An ordered list&lt;/h3&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;First item, yo&lt;/li&gt;
+  &lt;li&gt;Second item, dawg&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>Kai Fabi</name></author><summary type="html">Some text …</summary></entry></feed>
