@@ -34,4 +34,25 @@ This is an image from a link
 
 ![Some graph](https://raw.githubusercontent.com/KaiFabi/VanillaGeneticClassifier/master/results/fmnist_eval_accuracy.png)
 
+This is a centered text
+{: style="color:black; font-size: 100%; text-align: center;"}
+
+<!--
+![MNIST](https://raw.githubusercontent.com/KaiFabi/VanillaGeneticClassifier/master/results/gml_weights_mnist.png)
+![FMNIST](https://raw.githubusercontent.com/KaiFabi/VanillaGeneticClassifier/master/results/gml_weights_fmnist.png)
+-->
+
+<!--
+![Version 2](/assets/images/loss_accuracy_v2.png)
+-->
+<!--
+<p align="center">
+<img src="/assets/images/mnist.gif" width="368">
+<img src="/assets/images/fmnist.gif" width="368">
+</p>
+
+![Version 1](/assets/images/mnist.gif)
+![Version 2](/assets/images/fmnist.gif)
+-->
+
 [genetic-neural-networks]: https://github.com/KaiFabi/VanillaGeneticClassifier
