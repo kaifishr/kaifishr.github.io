@@ -2,8 +2,7 @@
 layout: post
 title: "Training a Simple Classifier using a Genetic Algorithm"
 excerpt: "Or how to train a classifier in a very untypical way."
-date:   2001-01-01 01:01:01
-categories: [artificial intelligence, machine learning, genetic algorithm, linear regression, python, multiprocessing]
+date:   2020-01-17 13:33:40
 ---
 
 **TL;DR**: A multi-class classification model can be trained relatively quickly using a genetic algorithm and can reach 91.77% (MNIST) and 83.72% (Fashionin-MNIST) of test accuracy.
@@ -111,11 +110,3 @@ The complete code of the project can be found [here][genetic-neural-networks].
 [mnist-benchmarks]:         https://towardsdatascience.com/logistic-regression-using-python-sklearn-numpy-mnist-handwriting-recognition-matplotlib-a6b31e2b166a
 <!-- Footnotes -->
 [^1]: Such as an artifical neural network that uses Heaviside activation functions.
-
-
-<!--Before starting the training process, all pixel values were scaled to have a zero mean and unit variance.-->
-
-<!-- TODO
-o Check statement about softmax
-
--->
