@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Training a Simple Classifier using an Evolutionary Algorithm"
-date:   2020-01-17 13:33:40
+date:   2020-01-17 10:20:40
 ---
 
 **TL;DR**: A linear multi-class classification model can be trained relatively quickly using an evolutionary algorithm and can reach 91.77% (MNIST) and 83.72% (Fashionin-MNIST) of test accuracy.
