@@ -268,9 +268,10 @@ In the second experiment, I'll compare four types of crossover operations to a b
 
 Simple deep neural networks can be trained using genetic algorithms. The results indicate, that for problems that are not too hard, simple genetic algorithms are sufficient to obtain good results. The results of the more difficult checkerboard dataset show, that the more advanced mutation methods are somewhat superior to the more simple implementations. However, further experiments are necessary for a better statement. It may be necessary to apply the presented optimization methods to harder problems in order to see more significant differences. 
 
-Check out my code on Github!
+Check out my [code][genetic-nn-training] on Github!
 
 <!-- Links -->
+[genetic-nn-training]:  https://github.com/KaiFabi/GeneticNeuralNetworkTraining
 [genetic-classifier]:   https://kaifabi.github.io/2020/01/17/train-a-simple-classifier-using-a-genetic-algorithm.html
 [Kaiming-Init]:         https://arxiv.org/pdf/1502.01852.pdf
 [Montana1989]:          https://www.ijcai.org/Proceedings/89-1/Papers/122.pdf
