@@ -76,20 +76,20 @@ Where `local_population_size` represents the number of agents on every core and 
 The classifier trained on the MNIST dataset achieved a test accuracy of 91.77% while the classifier trained on the more complex Fashion-MNIST dataset achieved a test accuracy of 83.72%. In both training runs no overfitting could be observed. This may have been due to the very small number of trainable parameters. It is interesting to note, that for the MNIST dataset the validation accuracy is constantly higher than the training accuracy. The following graphs show loss and accuracy for the validation and test set of the MNIST and Fashion-MNIST dataset. 
 
 <center> MNIST </center>
-![Version 1](/assets/images/mnist_loss_accuracy.png)
+![Version 1](/assets/images/post2/mnist_loss_accuracy.png)
 
 In case of the Fashion-MNIST dataset there is almost no difference between the results of the training and validation set.
 
 <center> Fashion-MNIST </center>
-![Version 1](/assets/images/fmnist_loss_accuracy.png)
+![Version 1](/assets/images/post2/fmnist_loss_accuracy.png)
 
 The weights for every class can also be visualized and help to understand what the classifier has learned during the training process of 100 global epochs. 
 
 <center> MNIST </center>
-<p align="center"> <img src="/assets/images/mnist.gif" width="500"> </p>
+<p align="center"> <img src="/assets/images/post2/mnist.gif" width="500"> </p>
 
 <center> Fashion-MNIST </center>
-<p align="center"> <img src="/assets/images/fmnist.gif" width="500"> </p>
+<p align="center"> <img src="/assets/images/post2/fmnist.gif" width="500"> </p>
 
 ## Discussion
 

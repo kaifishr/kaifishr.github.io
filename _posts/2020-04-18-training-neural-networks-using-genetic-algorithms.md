@@ -9,7 +9,7 @@ date:   2020-04-18 22:16:11
   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
 </script>
 
-# Introduction
+## Introduction
 
 This post covers the topic of training artifical neural networks using genetic algorithms. An interesting aspect of this approach is that you must have never heard of the backpropagation gradient descent algorithm to train (small) neural networks. In a [previous post][genetic-classifier] I trained a simple classifier on the MNIST and Fashion-MNIST dataset using a genetic algorithm. There you'll also find more information on evolutionary algorithms and genetic optimization.
 
@@ -189,7 +189,7 @@ bla
 
 ### Parameters
 
-If not stated otherwise, during all experiments, the following set of parameters have been used:
+If not stated otherwise, the following parameters were used for all experiments:
 
 ```python
 n_agents = 4

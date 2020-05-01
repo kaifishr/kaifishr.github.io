@@ -6,7 +6,7 @@ permalink: /about/
 
 > Try to be less wrong. You are definitely wrong to some degree. The question is how wrong and can you be less wrong tomorrow. (Elon Musk)
 
-I'm a physics graduate with a great interest in computer science. I specialized in the field of computational physics and machine learning. I am constantly working my way through the field of physics, computer science and machine learning, so I have picked up a few things from these areas. 
+I'm a physics graduate with a great interest in computer science. I specialized in the field of computational physics and machine learning. I am constantly working my way through the field of physics, computer science and machine learning, so I have picked up a few things. 
 
 I enjoy coding, working with data, trying out new ideas, and solving real world problems. I mostly use Python, C++, and C to get things done and like to automate stuff with Bash. Currently I am working as a machine learning research engineer in AI safety in the automotive industry.
 
