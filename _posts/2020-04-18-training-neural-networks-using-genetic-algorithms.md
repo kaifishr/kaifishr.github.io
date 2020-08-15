@@ -4,11 +4,6 @@ title:  'Training Neural Networks using Genetic Algorithms'
 date:   2020-04-18 22:16:11 
 ---
 
-<!-- Latex -->
-<script type="text/javascript" async
-  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-
 ## Introduction
 
 This post covers the topic of training artifical neural networks using genetic algorithms. An interesting aspect of this approach is that you must have never heard of the backpropagation gradient descent algorithm to train (small) neural networks. In a [previous post][genetic-classifier] I trained a simple classifier on the MNIST and Fashion-MNIST dataset using a genetic algorithm. There you'll also find more information on evolutionary algorithms and genetic optimization.

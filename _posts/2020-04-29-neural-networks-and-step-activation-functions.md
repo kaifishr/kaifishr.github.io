@@ -4,13 +4,7 @@ title: "Neural Networks with Step Activation Functions"
 date:   2020-04-29 18:02:52 
 ---
 
-<!--title: "Artificial Neural Networks with Step Activation Functions"-->
-<!-- Latex -->
-<script type="text/javascript" async
-  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-
-**TL;DR**: Neural networks equipped with step activation functions cannot be trained using a gradient based optimizer. This post shows that neural networks equipped with step activation functions can be optimized using a genetic algorithm. 
+**TL;DR**: Neural networks equipped with step activation functions cannot be trained using a gradient based optimizer. This blog post shows that they can, however, be optimized using a genetic approach.
 
 ---
 
@@ -30,7 +24,7 @@ This formula shows that the derivative of the activation function, $$h'(z_j^{(l)
 
 Functions where the derivative is always zero are for example the Heaviside, Sign or Floor activation functions. Thus, no gradients can be computed to update the network's trainable parameters. However, there is genetic optimization than allows to use such types of activation functions in neural networks. 
 
-In this post I'll focus on the use of step activation functions in fully connected neural networks and how well they can be used for classification tasks.
+In this blog post I'll focus on the use of step activation functions in fully connected neural networks and how well they can be used for classification tasks.
 
 ## Methods
 
@@ -214,8 +208,3 @@ You find the [code][gnn-github] for this project on Github. Check out my other p
 [gnn-github]: https://github.com/KaiFabi/GeneticNeuralNetworkTraining
 [gnn-blog]: https://kaifabi.github.io/2020/04/18/training-neural-networks-using-genetic-algorithms.html
 [genetic-classifier-blog]: https://kaifabi.github.io/2020/01/17/train-a-simple-classifier-using-a-genetic-algorithm.html
-
-
-
-<!-- Footnotes -->
-[^1]: This is a footnote
