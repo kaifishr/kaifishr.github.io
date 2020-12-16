@@ -99,23 +99,36 @@ By inserting Equation \eqref{eq:dLdeta_global_2} into Equation \eqref{eq:learnin
 We can now insert Equation \eqref{eq:learning_rate_update_global} into Equation \eqref{eq:weight_update} to obtain the weight update rule for a global adaptive learning rate
 
 \begin{equation}\label{eq:weight_update_global}
-w_i^{(t+1)} = w_i^{(t)} - \eta^{(t-1)}\frac{dL^{(t)}}{dw_i^{(t)}} - \frac{\alpha}{||\Omega||}\frac{dL^{(t)}}{dw_i^{(t)}} \sum_{j \in \Omega} \frac{dL^{(t)}}{dw_{j}^{(t)}}\frac{dL^{(t-1)}}{dw_{j}^{(t-1)}} 
+    w_i^{(t+1)} = w_i^{(t)} - \eta^{(t-1)}\frac{dL^{(t)}}{dw_i^{(t)}} - \frac{\alpha}{||\Omega||}\frac{dL^{(t)}}{dw_i^{(t)}} \sum_{j \in \Omega} \frac{dL^{(t)}}{dw_{j}^{(t)}}\frac{dL^{(t-1)}}{dw_{j}^{(t-1)}} 
 \end{equation}
 
 As we can see, the proposed method uses gradient information provided by the current and past time step to determine a learning rate for the next gradient descent step. The method allows to compute an adaptive global learning rate that determines the adjustment of all weights or parameter-wise adaptive learning rates. Moreover, the proposed method for determining adaptive learning rates is very easy to implement.
 
 ### Experiments
 
-In this section we empirically evaluate the proposed parameter-wise adaptive learning rate method presented above. We apply our method to different popular machine learning models such as linear regression, logistic regression, and multilayer fully connected neural networks.
+This section empirically evaluates the proposed parameter-wise adaptive learning rate method presented above. For this reason, we compare popular gradient descent optimization algorithms such as Stochastic Gradient Descent, Gradient Descent with Momentum, Nestrov Accelerated Gradient, and ADAM with and without the parameters-wise adaptive learning rate.
 
-To ensure comparability, the models were initialized with the same parameters. In order to determine the optimal learning rate for the experiments, a grid search was performed beforehand. For other hyper parameters like the momentum the values frequently found in the literature were used.
+To better understand the behaviour of these methods we can visualize the gradient descent with popular test functions (see [here][test_functions]) for optimization algorithms such as Beale's or Rosenbrock's function. Beale's function has a global minimum at $$(x,y)=(3,0.5)$$ and Rosenbrock's function at $$(x,y)=(1,1)$$.
+
+In order to determine an optimal learning rate $$\eta$$ as well as the hyperparameter $$\alpha$$ for each optimizers, a grid search was performed beforehand. For other hyperparameters like the momentum, frequently used values found in the literature were used. 
+
+In order to compare the convergence speed of different optimizers we use a loss function that is defined by the Euclidean distance to the global minimum.
 
 ### Results
 
-![gradient_descent_beale_adam](/assets/images/post6/gd_adam.png)
+The results for Beale's function are presented in the following three figures. For better clarity, the results are shwon for one optimizer at a time. The optimizer that uses an adaptive learning rate is indicated by a plus sign. The visualization of the gradient descent already indicates that the global minimum is reached faster for optimizers that use the adaptive learning rate presented above.
+
 ![gradient_descent_beale_gd](/assets/images/post6/gd_gd.png)
 ![gradient_descent_beale_gdm](/assets/images/post6/gd_gdm.png)
+![gradient_descent_beale_adam](/assets/images/post6/gd_adam.png)
+
+The next figure summarizes the findings for all used optimizers with and without adaptive learning rate. As we can see, optimizers equipped with adaptive learning rate not only converge faster, but also get closer to the global minimum.
+
 ![loss_beale](/assets/images/post6/loss_beale.png)
+
+The following two figures show the results for the Rosenbrock function. Here similar results can be observed.
+
+![gradient_descent_rosenbrock_all](/assets/images/post6/gd_rosenbrock.png)
 ![loss_rosenbrock](/assets/images/post6/loss_rosenbrock.png)
 
 ### Outlook
@@ -125,3 +138,5 @@ The method also allows for poorly chosen hyperparameters to converge really fast
 Using our method for adaptive learning rates we demonstrate that popular optimizers such as SGD, Adam, Nestrov can significantly increase their performance.
 
 <!-- Links -->
+
+[test_functions]: https://en.wikipedia.org/wiki/Test_functions_for_optimization
