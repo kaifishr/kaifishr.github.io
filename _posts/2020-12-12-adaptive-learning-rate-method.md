@@ -16,6 +16,8 @@ The method can easily applied to popular optimization algorithms such as Gradien
 
 These optimization algorithm show better performance when equipped with an adaptive learning rate compared to a static global learning rate.
 
+This method allows us to propagate loss information back to the learning rate.
+
 ### Related Work
 
 In recent years many learning rate schedules have been proposed to accelerate the training of machine learning models. A good comparison of these methods can be found ***here***. These methods have in common, that they do not take information into account provided by the model during the training process such as loss or gradient information. 
@@ -118,8 +120,17 @@ In order to compare the convergence speed of different optimizers we use a loss 
 
 The results for Beale's function are presented in the following three figures. For better clarity, the results are shwon for one optimizer at a time. The optimizer that uses an adaptive learning rate is indicated by a plus sign. The visualization of the gradient descent already indicates that the global minimum is reached faster for optimizers that use the adaptive learning rate presented above.
 
+The following figure shows the behaviour of the classic Gradient Descent algorithm. We see that the algorithms equipped with an adaptive learning rate (gd+) approaches the global minimum much faster in the first steps of optimization.
+
 ![gradient_descent_beale_gd](/assets/images/post6/gd_gd.png)
+
+<!--
+For Gradient Descent with Momentum, the speed of convergence of 
 ![gradient_descent_beale_gdm](/assets/images/post6/gd_gdm.png)
+-->
+
+The next figure shows the result for the Adam optimization algorithm. The Adam algorithm approaches to global minimum in a steady and a very carfully way. If we equip the Adam optimization algorithm with an adaptive learning rate for each parameter we can observe, that the gradient descent is much more aggresive. Using adaptive learning rates the global minimum is approached much faster and in a more direct way.
+
 ![gradient_descent_beale_adam](/assets/images/post6/gd_adam.png)
 
 The next figure summarizes the findings for all used optimizers with and without adaptive learning rate. As we can see, optimizers equipped with adaptive learning rate not only converge faster, but also get closer to the global minimum.
@@ -130,6 +141,10 @@ The following two figures show the results for the Rosenbrock function. Here sim
 
 ![gradient_descent_rosenbrock_all](/assets/images/post6/gd_rosenbrock.png)
 ![loss_rosenbrock](/assets/images/post6/loss_rosenbrock.png)
+
+### Discussion
+
+Using an adaptive learning rate allows to ... less time necessary for hyperparameter search.
 
 ### Outlook
 
