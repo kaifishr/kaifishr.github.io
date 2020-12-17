@@ -110,9 +110,9 @@ As we can see, the proposed method uses gradient information provided by the cur
 
 This section empirically evaluates the proposed parameter-wise adaptive learning rate method presented above. For this reason, we compare popular gradient descent optimization algorithms such as Stochastic Gradient Descent, Gradient Descent with Momentum, Nestrov Accelerated Gradient, and ADAM with and without the parameters-wise adaptive learning rate.
 
-To better understand the behaviour of these methods we can visualize the gradient descent with popular test functions (see [here][test_functions]) for optimization algorithms such as Beale's or Rosenbrock's function. Beale's function has a global minimum at $$(x,y)=(3,0.5)$$ and Rosenbrock's function at $$(x,y)=(1,1)$$.
+To better understand the behaviour of these methods we can visualize the gradient descent with popular test functions (see [here][test_functions]) for optimization algorithms such as Beale's or Rosenbrock's function. Beale's function has a global minimum at $$(x,y)=(3,0.5)$$ and Rosenbrock's function at $$(x,y)=(1,1)$$ which is indicated by a black star.
 
-In order to determine an optimal learning rate $$\eta$$ as well as the hyperparameter $$\alpha$$ for each optimizers, a grid search was performed beforehand. For other hyperparameters like the momentum, frequently used values found in the literature were used. 
+In order to determine an optimal learning rate $$\eta$$ as well as the hyperparameter $$\alpha$$ for each optimizers, a grid search was performed beforehand. For other hyperparameters like the momentum, frequently used values found in the literature were used. $$\gamma=0.5$$, $$\beta_1=0.9$$, $$\beta_2=0.99$$, $$\epsilon=1e-8$$
 
 In order to compare the convergence speed of different optimizers we use a loss function that is defined by the Euclidean distance to the global minimum.
 
@@ -120,9 +120,22 @@ In order to compare the convergence speed of different optimizers we use a loss 
 
 The results for Beale's function are presented in the following three figures. For better clarity, the results are shwon for one optimizer at a time. The optimizer that uses an adaptive learning rate is indicated by a plus sign. The visualization of the gradient descent already indicates that the global minimum is reached faster for optimizers that use the adaptive learning rate presented above.
 
-The following figure shows the behaviour of the classic Gradient Descent algorithm. We see that the algorithms equipped with an adaptive learning rate (gd+) approaches the global minimum much faster in the first steps of optimization.
+The following figure shows the behaviour of the classic Gradient Descent (GD) algorithm. We see that the algorithms equipped with an adaptive learning rate (GD+) approaches the global minimum much faster in the first steps of optimization.
 
-![gradient_descent_beale_gd](/assets/images/post6/gd_gd.png)
+![](/assets/images/post6/gd_beale_gd_alpha_1em5.png)
+![](/assets/images/post6/loss_gd_beale_1em4.png)
+
+GDM:
+
+![](/assets/images/post6/gd_beale_gdm_alpha_1em5.png)
+![](/assets/images/post6/gd_beale_gdm_alpha_5em5.png)
+![](/assets/images/post6/loss_gdm_beale_5em4.png)
+
+NAG:
+
+![](/assets/images/post6/gd_beale_nag_alpha_1em6.png)
+![](/assets/images/post6/gd_beale_nag_alpha_1em8.png)
+![](/assets/images/post6/loss_nag_beale.png)
 
 <!--
 For Gradient Descent with Momentum, the speed of convergence of 
@@ -131,16 +144,19 @@ For Gradient Descent with Momentum, the speed of convergence of
 
 The next figure shows the result for the Adam optimization algorithm. The Adam algorithm approaches to global minimum in a steady and a very carfully way. If we equip the Adam optimization algorithm with an adaptive learning rate for each parameter we can observe, that the gradient descent is much more aggresive. Using adaptive learning rates the global minimum is approached much faster and in a more direct way.
 
-![gradient_descent_beale_adam](/assets/images/post6/gd_adam.png)
+![](/assets/images/post6/gd_beale_adam_alpha_1em5.png)
+![](/assets/images/post6/gd_beale_adam_alpha_1em7.png)
+![](/assets/images/post6/loss_adam_beale.png)
 
 The next figure summarizes the findings for all used optimizers with and without adaptive learning rate. As we can see, optimizers equipped with adaptive learning rate not only converge faster, but also get closer to the global minimum.
 
-![loss_beale](/assets/images/post6/loss_beale.png)
+![loss_beale](/assets/images/post6/loss_beale_all.png)
 
+<!--
 The following two figures show the results for the Rosenbrock function. Here similar results can be observed.
-
 ![gradient_descent_rosenbrock_all](/assets/images/post6/gd_rosenbrock.png)
 ![loss_rosenbrock](/assets/images/post6/loss_rosenbrock.png)
+-->
 
 ### Discussion
 
