@@ -106,6 +106,68 @@ We can now insert Equation \eqref{eq:learning_rate_update_global} into Equation 
 
 As we can see, the proposed method uses gradient information provided by the current and past time step to determine a learning rate for the next gradient descent step. The method allows to compute an adaptive global learning rate that determines the adjustment of all weights or parameter-wise adaptive learning rates. Moreover, the proposed method for determining adaptive learning rates is very easy to implement.
 
+### Implementation
+
+In this section I want to show how the method introduced above can be integrated into common gradient descent optimization schemes.
+
+```python
+    def dfdx(x, y, h=1e-9):
+        return 0.5 * (f(x+h, y) - f(x-h, y)) / h
+
+    def dfdy(x, y, h=1e-9):
+        return 0.5 * (f(x, y+h) - f(x, y-h)) / h
+
+    def gradient_descent():
+        x -= learning_rate * dfdx(x, y)
+        y -= learning_rate * dfdy(x, y)
+
+    def gradient_descent():
+        dx = dfdx(x, y)
+        dy = dfdy(x, y)
+
+        learning_rate_x += alpha * dx * dx_old
+        learning_rate_y += alpha * dy * dy_old
+
+        x -= learning_rate_x * dx
+        y -= learning_rate_y * dy
+
+        dx_old = dx
+        dy_old = dy
+
+    def gradient_descent_adam():
+
+        dx = dfdx(x, y)
+        dy = dfdy(x, y)
+
+        m_x = beta_1 * m_x_old + (1.0 - beta_1) * dx
+        m_y = beta_1 * m_y_old + (1.0 - beta_1) * dy
+
+        v_x = beta_2 * v_x_old + (1.0 - beta_2) * dx * dx
+        v_y = beta_2 * v_y_old + (1.0 - beta_2) * dy * dy
+
+        m_x_hat = m_x / (1.0 - beta_1**(i+1))
+        m_y_hat = m_y / (1.0 - beta_1**(i+1))
+
+        v_x_hat = v_x / (1.0 - beta_2**(i+1))
+        v_y_hat = v_y / (1.0 - beta_2**(i+1))
+
+        learning_rate_x += alpha * dx * dx_old
+        learning_rate_y += alpha * dy * dy_old
+
+        x -= (learning_rate_x / (np.sqrt(v_x_hat) + epsilon)) * m_x_hat
+        y -= (learning_rate_y / (np.sqrt(v_y_hat) + epsilon)) * m_y_hat
+
+        m_x_old = m_x
+        m_y_old = m_y
+
+        v_x_old = v_x
+        v_y_old = v_y
+
+        dx_old = dx
+        dy_old = dy
+
+```
+
 ### Experiments
 
 This section empirically evaluates the proposed parameter-wise adaptive learning rate method presented above. For this reason, we compare popular gradient descent optimization algorithms such as Stochastic Gradient Descent, Gradient Descent with Momentum, Nestrov Accelerated Gradient, and ADAM with and without the parameters-wise adaptive learning rate.
