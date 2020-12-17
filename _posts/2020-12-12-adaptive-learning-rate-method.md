@@ -108,64 +108,83 @@ As we can see, the proposed method uses gradient information provided by the cur
 
 ### Implementation
 
-In this section I want to show how the method introduced above can be integrated into common gradient descent optimization schemes.
+In this section I want to show how the method introduced above can be integrated into common gradient descent optimization schemes. The implementation is fairly straightforward and can also be found on my Github repository (**here**)
 
 ```python
-    def dfdx(x, y, h=1e-9):
-        return 0.5 * (f(x+h, y) - f(x-h, y)) / h
+def f(x, y):
+    """
+    Beale's function
+    """
+    return (1.5 - x + x*y)**2 + (2.25 - x + x*y**2)**2 + (2.625 - x + x*y**3)**2
+```
 
-    def dfdy(x, y, h=1e-9):
-        return 0.5 * (f(x, y+h) - f(x, y-h)) / h
+```python
+def dfdx(x, y, h=1e-9):
+    return 0.5 * (f(x+h, y) - f(x-h, y)) / h
 
-    def gradient_descent():
-        x -= learning_rate * dfdx(x, y)
-        y -= learning_rate * dfdy(x, y)
+def dfdy(x, y, h=1e-9):
+    return 0.5 * (f(x, y+h) - f(x, y-h)) / h
+```
 
-    def gradient_descent():
-        dx = dfdx(x, y)
-        dy = dfdy(x, y)
+```python
+def gradient_descent():
+    x -= learning_rate * dfdx(x, y)
+    y -= learning_rate * dfdy(x, y)
+```
 
-        learning_rate_x += alpha * dx * dx_old
-        learning_rate_y += alpha * dy * dy_old
+```python
+dx_old = 0.0
+dy_old = 0.0
 
-        x -= learning_rate_x * dx
-        y -= learning_rate_y * dy
+learning_rate_x = learning_rate
+learning_rate_y = learning_rate
 
-        dx_old = dx
-        dy_old = dy
+def gradient_descent():
+    dx = dfdx(x, y)
+    dy = dfdy(x, y)
 
-    def gradient_descent_adam():
+    learning_rate_x += alpha * dx * dx_old
+    learning_rate_y += alpha * dy * dy_old
 
-        dx = dfdx(x, y)
-        dy = dfdy(x, y)
+    x -= learning_rate_x * dx
+    y -= learning_rate_y * dy
 
-        m_x = beta_1 * m_x_old + (1.0 - beta_1) * dx
-        m_y = beta_1 * m_y_old + (1.0 - beta_1) * dy
+    dx_old = dx
+    dy_old = dy
+```
 
-        v_x = beta_2 * v_x_old + (1.0 - beta_2) * dx * dx
-        v_y = beta_2 * v_y_old + (1.0 - beta_2) * dy * dy
+```python
+def gradient_descent_adam():
 
-        m_x_hat = m_x / (1.0 - beta_1**(i+1))
-        m_y_hat = m_y / (1.0 - beta_1**(i+1))
+    dx = dfdx(x, y)
+    dy = dfdy(x, y)
 
-        v_x_hat = v_x / (1.0 - beta_2**(i+1))
-        v_y_hat = v_y / (1.0 - beta_2**(i+1))
+    m_x = beta_1 * m_x_old + (1.0 - beta_1) * dx
+    m_y = beta_1 * m_y_old + (1.0 - beta_1) * dy
 
-        learning_rate_x += alpha * dx * dx_old
-        learning_rate_y += alpha * dy * dy_old
+    v_x = beta_2 * v_x_old + (1.0 - beta_2) * dx * dx
+    v_y = beta_2 * v_y_old + (1.0 - beta_2) * dy * dy
 
-        x -= (learning_rate_x / (np.sqrt(v_x_hat) + epsilon)) * m_x_hat
-        y -= (learning_rate_y / (np.sqrt(v_y_hat) + epsilon)) * m_y_hat
+    m_x_hat = m_x / (1.0 - beta_1**(i+1))
+    m_y_hat = m_y / (1.0 - beta_1**(i+1))
 
-        m_x_old = m_x
-        m_y_old = m_y
+    v_x_hat = v_x / (1.0 - beta_2**(i+1))
+    v_y_hat = v_y / (1.0 - beta_2**(i+1))
 
-        v_x_old = v_x
-        v_y_old = v_y
+    learning_rate_x += alpha * dx * dx_old
+    learning_rate_y += alpha * dy * dy_old
 
-        dx_old = dx
-        dy_old = dy
+    x -= (learning_rate_x / (np.sqrt(v_x_hat) + epsilon)) * m_x_hat
+    y -= (learning_rate_y / (np.sqrt(v_y_hat) + epsilon)) * m_y_hat
 
+    m_x_old = m_x
+    m_y_old = m_y
+
+    v_x_old = v_x
+    v_y_old = v_y
+
+    dx_old = dx
+    dy_old = dy
 ```
 
 ### Experiments
@@ -176,24 +195,40 @@ To better understand the behaviour of these methods we can visualize the gradien
 
 In order to determine an optimal learning rate $$\eta$$ as well as the hyperparameter $$\alpha$$ for each optimizers, a grid search was performed beforehand. For other hyperparameters like the momentum, frequently used values found in the literature were used. $$\gamma=0.5$$, $$\beta_1=0.9$$, $$\beta_2=0.99$$, $$\epsilon=1e-8$$
 
+Optimizer equipped with an adaptive learning rate are marked by a plus sign.
+
+| Hyperparameter | GD | GD+ | GDM | GDM+ | NAG | NAG+ | Adam | Adam+ |
+|----------------|----|-----|-----|------|-----|------|------|-------|
+| $$\eta$$ | 0.01 | 0.01 | 0.015 | 0.01 | 0.006 | 0.006 | 0.0005 | 0.0005 |
+| $$\alpha$$ | 0 | 1e-4 | 0 | 1e-5 | 0 | 1e-6 | 0 | 1e-8 |
+
+Please note, that the initial learning rate for all optimizers with adaptive learning rate are equal or smaller compared to the standard algorithm.
+
 In order to compare the convergence speed of different optimizers we use a loss function that is defined by the Euclidean distance to the global minimum.
 
 ### Results
 
-The results for Beale's function are presented in the following three figures. For better clarity, the results are shwon for one optimizer at a time. The optimizer that uses an adaptive learning rate is indicated by a plus sign. The visualization of the gradient descent already indicates that the global minimum is reached faster for optimizers that use the adaptive learning rate presented above.
+For better comparability, results are shown for one optimizer at a time.
 
-The following figure shows the behaviour of the classic Gradient Descent (GD) algorithm. We see that the algorithms equipped with an adaptive learning rate (GD+) approaches the global minimum much faster in the first steps of optimization.
+#### Gradient Descent
+
+The following figure shows the behaviour of the classic Gradient Descent (GD) algorithm. We see that the algorithms equipped with an adaptive learning rate (GD+) approaches the global minimum on a similar path but with much larger steps. 
 
 ![](/assets/images/post6/gd_beale_gd_alpha_1em5.png)
+
+This behaviour is also reflected in the loss as apparent in the next figure. The loss shows that the adaptive learning rate not only allows to approach the global minimum much faster, it also gets about an order of magnitued closer after convergence.
+
 ![](/assets/images/post6/loss_gd_beale_1em4.png)
 
-GDM:
+#### GDM
 
+<!--
 ![](/assets/images/post6/gd_beale_gdm_alpha_1em5.png)
+-->
 ![](/assets/images/post6/gd_beale_gdm_alpha_5em5.png)
 ![](/assets/images/post6/loss_gdm_beale_5em4.png)
 
-NAG:
+#### NAG
 
 ![](/assets/images/post6/gd_beale_nag_alpha_1em6.png)
 ![](/assets/images/post6/gd_beale_nag_alpha_1em8.png)
@@ -222,7 +257,9 @@ The following two figures show the results for the Rosenbrock function. Here sim
 
 ### Discussion
 
-Using an adaptive learning rate allows to ... less time necessary for hyperparameter search.
+The visualization of the gradient descent already indicates that the global minimum is reached faster for optimizers that use the adaptive learning rate presented above.
+
+Using an adaptive learning rate allows to ... less time necessary for hyperparameter search. In principle it is possible to start with a learning rate of zero.
 
 ### Outlook
 
