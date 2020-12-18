@@ -133,17 +133,22 @@ def dfdy(x, y, h=1e-9):
 The next step is to implement the standard gradient descent. Here the learning rate $\eta$ is constant for the entire optimization process.
 
 ```python
+eta_x = eta 
+eta_y = eta 
+
 def gradient_descent():
     x -= eta * dfdx(x, y)
     y -= eta * dfdy(x, y)
 ```
 
-```python
-dx_old = 0.0
-dy_old = 0.0
+Given the gradient descent optimizer as implemented above, we can now add the adaptive learning rate method to the algorithm by caching the new gradients to determine the new learning rate based on the last two gradients and then performing gradient descent. Afterwards, the new gradients are cached for the next optimization step.
 
+```python
 eta_x = eta 
 eta_y = eta 
+
+dx_old = 0.0
+dy_old = 0.0
 
 def gradient_descent():
     dx = dfdx(x, y)
@@ -152,16 +157,17 @@ def gradient_descent():
     eta_x += alpha * dx * dx_old
     eta_y += alpha * dy * dy_old
 
-    x -= learning_rate_x * dx
-    y -= learning_rate_y * dy
+    x -= eta_x * dx
+    y -= eta_y * dy
 
     dx_old = dx
     dy_old = dy
 ```
 
+The next example shows the integration of an adaptive learning step in the case of the Adam optimizer. The implementation steps are the same.
+
 ```python
 def gradient_descent_adam():
-
     dx = dfdx(x, y)
     dy = dfdy(x, y)
 
@@ -177,11 +183,11 @@ def gradient_descent_adam():
     v_x_hat = v_x / (1.0 - beta_2**(i+1))
     v_y_hat = v_y / (1.0 - beta_2**(i+1))
 
-    learning_rate_x += alpha * dx * dx_old
-    learning_rate_y += alpha * dy * dy_old
+    eta_x += alpha * dx * dx_old
+    eta_y += alpha * dy * dy_old
 
-    x -= (learning_rate_x / (np.sqrt(v_x_hat) + epsilon)) * m_x_hat
-    y -= (learning_rate_y / (np.sqrt(v_y_hat) + epsilon)) * m_y_hat
+    x -= (eta_x / (np.sqrt(v_x_hat) + epsilon)) * m_x_hat
+    y -= (eta_y / (np.sqrt(v_y_hat) + epsilon)) * m_y_hat
 
     m_x_old = m_x
     m_y_old = m_y
