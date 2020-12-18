@@ -10,13 +10,12 @@ date:   2020-12-12 12:12:12
 
 ## Introduction 
 
-In this blog post I present a novel adaptive learning rate method for gradient descent optimization algorithms. The proposed method uses gradient information that allow to either compute parameter-wise or global adaptive learning rates.
+In this blog post I present an adaptive learning rate method for gradient descent optimization algorithms (to the best of my knowledge, this method has not yet been mentioned in the literature). 
 
-The method can easily applied to popular optimization algorithms such as Gradient Descent, Gradient Descent with Momentum, Nestrov Accelerated Gradient, ADAM, to name just a few. 
+The proposed technique uses gradient information that allow to either compute parameter-wise or global adaptive learning rates. In more detail, the learning rate is treated as a differentiable function allowing to propagate the loss information back to the learning rate where it can then ab adjusted accordingly.
 
-These optimization algorithm show better performance when equipped with an adaptive learning rate compared to a static global learning rate.
+The method can easily applied to popular optimization algorithms such as Gradient Descent, Gradient Descent with Momentum, Nestrov Accelerated Gradient, ADAM, to name just a few. In a few simple experiments I show, that these optimization algorithm show better performance when equipped with this adaptive learning rate method compared to fixed learning rate.
 
-This method allows us to propagate loss information back to the learning rate.
 
 ## Related Work
 
