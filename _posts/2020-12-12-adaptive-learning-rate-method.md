@@ -108,7 +108,9 @@ As we can see, the proposed method uses gradient information provided by the cur
 
 ## Implementation
 
-In this section I want to show how the method introduced above can be integrated into common gradient descent optimization schemes. The implementation is fairly straightforward and can also be found on my Github repository.
+In this section I show how the method introduced above can be integrated into common gradient descent optimization algorithms. The implementation is fairly straightforward and can also be found on my Github repository.
+
+First, we define the test function. In this case Beale's function:
 
 ```python
 def f(x, y):
@@ -118,6 +120,8 @@ def f(x, y):
     return (1.5 - x + x*y)**2 + (2.25 - x + x*y**2)**2 + (2.625 - x + x*y**3)**2
 ```
 
+Next, the partial derivatives with respect to $x$ and $y$ are implemented. Here I use a simple implementation of the difference quotient (see [here][numerical_differentiation] for more stable versions of the difference quotient) in order to be able to also use other test functions.
+
 ```python
 def dfdx(x, y, h=1e-9):
     return 0.5 * (f(x+h, y) - f(x-h, y)) / h
@@ -126,25 +130,27 @@ def dfdy(x, y, h=1e-9):
     return 0.5 * (f(x, y+h) - f(x, y-h)) / h
 ```
 
+The next step is to implement the standard gradient descent. Here the learning rate $\eta$ is constant for the entire optimization process.
+
 ```python
 def gradient_descent():
-    x -= learning_rate * dfdx(x, y)
-    y -= learning_rate * dfdy(x, y)
+    x -= eta * dfdx(x, y)
+    y -= eta * dfdy(x, y)
 ```
 
 ```python
 dx_old = 0.0
 dy_old = 0.0
 
-learning_rate_x = learning_rate
-learning_rate_y = learning_rate
+eta_x = eta 
+eta_y = eta 
 
 def gradient_descent():
     dx = dfdx(x, y)
     dy = dfdy(x, y)
 
-    learning_rate_x += alpha * dx * dx_old
-    learning_rate_y += alpha * dy * dy_old
+    eta_x += alpha * dx * dx_old
+    eta_y += alpha * dy * dy_old
 
     x -= learning_rate_x * dx
     y -= learning_rate_y * dy
@@ -268,4 +274,5 @@ Using our method for adaptive learning rates we demonstrate that popular optimiz
 
 <!-- Links -->
 
+[numerical_differentiation]: https://en.wikipedia.org/wiki/Numerical_differentiation
 [test_functions]: https://en.wikipedia.org/wiki/Test_functions_for_optimization
