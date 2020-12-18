@@ -8,7 +8,7 @@ date:   2020-12-12 12:12:12
 
 ---
 
-### Introduction 
+## Introduction 
 
 In this blog post I present a novel adaptive learning rate method for gradient descent optimization algorithms. The proposed method uses gradient information that allow to either compute parameter-wise or global adaptive learning rates.
 
@@ -18,7 +18,7 @@ These optimization algorithm show better performance when equipped with an adapt
 
 This method allows us to propagate loss information back to the learning rate.
 
-### Related Work
+## Related Work
 
 In recent years many learning rate schedules have been proposed to accelerate the training of machine learning models. A good comparison of these methods can be found ***here***. These methods have in common, that they do not take information into account provided by the model during the training process such as loss or gradient information. 
 
@@ -28,7 +28,7 @@ For this reason, cyclic learning rate schedules may be the better option for con
 
 For this reason, we can use the gradient information provided by the model to determine an adaptive learning rate at every backpropagation gradient descent step.
 
-### Method
+## Method
 
 In this section we derive an adaptive learning rate update scheme for gradient descent optimization algorithms. Stochastic gradient descent computes the gradient of a loss function $$L$$ with respect to the parameters $$\boldsymbol{w}$$. The update rule for each parameter can be written as follows:
 
@@ -106,9 +106,9 @@ We can now insert Equation \eqref{eq:learning_rate_update_global} into Equation 
 
 As we can see, the proposed method uses gradient information provided by the current and past time step to determine a learning rate for the next gradient descent step. The method allows to compute an adaptive global learning rate that determines the adjustment of all weights or parameter-wise adaptive learning rates. Moreover, the proposed method for determining adaptive learning rates is very easy to implement.
 
-### Implementation
+## Implementation
 
-In this section I want to show how the method introduced above can be integrated into common gradient descent optimization schemes. The implementation is fairly straightforward and can also be found on my Github repository (**here**)
+In this section I want to show how the method introduced above can be integrated into common gradient descent optimization schemes. The implementation is fairly straightforward and can also be found on my Github repository.
 
 ```python
 def f(x, y):
@@ -187,15 +187,17 @@ def gradient_descent_adam():
     dy_old = dy
 ```
 
-### Experiments
+## Experiments
 
-This section empirically evaluates the proposed parameter-wise adaptive learning rate method presented above. For this reason, we compare popular gradient descent optimization algorithms such as Stochastic Gradient Descent, Gradient Descent with Momentum, Nestrov Accelerated Gradient, and ADAM with and without the parameters-wise adaptive learning rate.
+Now we want to performe some experiments that allow us to compare popular gradient descent optimization algorithms such as Gradient Descent (GD), Gradient Descent with Momentum (GDM), Nestrov Accelerated Gradient (NAG), and Adam with and without the parameters-wise adaptive learning rate. Optimizers equipped with an adaptive learning rate method are marked by a plus sign (GD+, GDM+, NAG+, Adam+).
 
-To better understand the behaviour of these methods we can visualize the gradient descent with popular test functions (see [here][test_functions]) for optimization algorithms such as Beale's or Rosenbrock's function. Beale's function has a global minimum at $$(x,y)=(3,0.5)$$ and Rosenbrock's function at $$(x,y)=(1,1)$$ which is indicated by a black star.
+To better understand the behaviour of these methods we can visualize the gradient descent using a popular test function (see also [here][test_functions] for more such functions) for optimization algorithms such as Beale's function:
 
-In order to determine an optimal learning rate $$\eta$$ as well as the hyperparameter $$\alpha$$ for each optimizers, a grid search was performed beforehand. For other hyperparameters like the momentum, frequently used values found in the literature were used. $$\gamma=0.5$$, $$\beta_1=0.9$$, $$\beta_2=0.99$$, $$\epsilon=1e-8$$
+ $$f(x,y) = (1.5 - x + xy)^2 + (2.25 - x + xy^2)^2 + (2.625 - x + xy^3)^2$$
 
-Optimizer equipped with an adaptive learning rate are marked by a plus sign.
+Beale's function has a global minimum at $$(x,y)=(3,0.5)$$ which is indicated by a black star in the results section.
+
+In order to determine an optimal learning rate $$\eta$$ as well as the hyperparameter $$\alpha$$ for each optimizers, a grid search was performed beforehand. The optimal hyperparameter is determined by how fast the global minimum is reached. To meassure the speed of convergence of different optimizers I used a loss function that is defined by the Euclidean distance to the global minimum.
 
 | Hyperparameter | GD | GD+ | GDM | GDM+ | NAG | NAG+ | Adam | Adam+ |
 |----------------|----|-----|-----|------|-----|------|------|-------|
@@ -204,13 +206,15 @@ Optimizer equipped with an adaptive learning rate are marked by a plus sign.
 
 Please note, that the initial learning rate for all optimizers with adaptive learning rate are equal or smaller compared to the standard algorithm.
 
-In order to compare the convergence speed of different optimizers we use a loss function that is defined by the Euclidean distance to the global minimum.
+For other hyperparameters, frequently used values found in the literature were used:
 
-### Results
+$$\gamma=0.5$$, $$\beta_1=0.9$$, $$\beta_2=0.99$$, $$\epsilon=1e-8$$
+
+## Results
 
 For better comparability, results are shown for one optimizer at a time.
 
-#### Gradient Descent
+### Gradient Descent
 
 The following figure shows the behaviour of the classic Gradient Descent (GD) algorithm. We see that the algorithms equipped with an adaptive learning rate (GD+) approaches the global minimum on a similar path but with much larger steps. 
 
@@ -220,48 +224,43 @@ This behaviour is also reflected in the loss as apparent in the next figure. The
 
 ![](/assets/images/post6/loss_gd_beale_1em4.png)
 
-#### GDM
+### Gradient Descent with Momentum
 
-<!--
-![](/assets/images/post6/gd_beale_gdm_alpha_1em5.png)
--->
+In the case with momentum, the results behave similarly to those for the classic gradient descent. Due to the adaptive learning rate, the global minimum is reached in a more direct way and with larger steps.
+
 ![](/assets/images/post6/gd_beale_gdm_alpha_5em5.png)
+
+Here we see again, that the optimizer equipped with an adaptive learning rate converges much faster and also gets much closer to the global minimum.
+
 ![](/assets/images/post6/loss_gdm_beale_5em4.png)
 
-#### NAG
+### Nestrov Accelerated Gradient
+
+In case of the Nestrov Accelerated Gradient (NAG) optimizer with a fixed learning rate, the optimizer approaches the global minimum more carfully compared to the method equipped with an adaptive learning rate. Here we see that NAG+ again behaves more aggressive right at the beginning of the optimization process.
 
 ![](/assets/images/post6/gd_beale_nag_alpha_1em6.png)
-![](/assets/images/post6/gd_beale_nag_alpha_1em8.png)
+
+Even thought the gradient descent with NAG+ does not approach the minimum right from the start, it converges with a slight delay much faster requiring only half the steps to converge compared to NAG.
+
 ![](/assets/images/post6/loss_nag_beale.png)
 
-<!--
-For Gradient Descent with Momentum, the speed of convergence of 
-![gradient_descent_beale_gdm](/assets/images/post6/gd_gdm.png)
--->
+### Adam
 
-The next figure shows the result for the Adam optimization algorithm. The Adam algorithm approaches to global minimum in a steady and a very carfully way. If we equip the Adam optimization algorithm with an adaptive learning rate for each parameter we can observe, that the gradient descent is much more aggresive. Using adaptive learning rates the global minimum is approached much faster and in a more direct way.
+The next figure shows the results for the Adam optimization algorithm. The results show that the Adam algorithm with constant learning rate approaches to global minimum in a steady and a very carfully way. If we equip the Adam optimizer with an parameter-wise adaptive learning rate, we can observe, that the gradient descent is much more aggresive meaning, that the global minimum is approached with larger steps and in a more direct way.
 
-![](/assets/images/post6/gd_beale_adam_alpha_1em5.png)
 ![](/assets/images/post6/gd_beale_adam_alpha_1em7.png)
+
+If we look at how the loss behaves we see how much faster the optimizer with adaptive learning rate converges. Two things in particular stand out here. Adam+ get very close to the global minimum before it than oscillates much further away around the minimum. On the other hand, even though Adam takes much for time to converge, it get closer to the global minimum by almost two order of magnitudes.
+
 ![](/assets/images/post6/loss_adam_beale.png)
 
-The next figure summarizes the findings for all used optimizers with and without adaptive learning rate. As we can see, optimizers equipped with adaptive learning rate not only converge faster, but also get closer to the global minimum.
-
-![loss_beale](/assets/images/post6/loss_beale_all.png)
-
-<!--
-The following two figures show the results for the Rosenbrock function. Here similar results can be observed.
-![gradient_descent_rosenbrock_all](/assets/images/post6/gd_rosenbrock.png)
-![loss_rosenbrock](/assets/images/post6/loss_rosenbrock.png)
--->
-
-### Discussion
+## Discussion
 
 The visualization of the gradient descent already indicates that the global minimum is reached faster for optimizers that use the adaptive learning rate presented above.
 
 Using an adaptive learning rate allows to ... less time necessary for hyperparameter search. In principle it is possible to start with a learning rate of zero.
 
-### Outlook
+## Outlook
 
 The method also allows for poorly chosen hyperparameters to converge really fast.
 
