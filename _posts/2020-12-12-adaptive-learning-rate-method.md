@@ -273,9 +273,11 @@ Using an adaptive learning rate allows to ... less time necessary for hyperparam
 
 ## Outlook
 
-The method also allows for poorly chosen hyperparameters to converge really fast.
+I showed that a new gradient-based method for adaptive learning rates can significantly increase the performance of popular gradient descent optimization algorithms such as GD, GDM, NAG or Adam.
 
-Using our method for adaptive learning rates we demonstrate that popular optimizers such as SGD, Adam, Nestrov can significantly increase their performance.
+Not only do these optimizers equipped with the adaptive learning rate converge much faster, in most cases they also get much closer to the global minimum in the experiments.
+
+In a next step, this method should be used in the training of a larger machine learning model to better assess its actual performance.
 
 <!-- Links -->
 
