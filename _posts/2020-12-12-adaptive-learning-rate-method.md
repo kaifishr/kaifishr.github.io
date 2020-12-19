@@ -19,13 +19,17 @@ The method can easily applied to popular optimization algorithms such as Gradien
 
 ## Related Work
 
-In recent years many learning rate schedules have been proposed to accelerate the training of machine learning models. A good comparison of these methods can be found ***here***. These methods have in common, that they do not take information into account provided by the model during the training process such as loss or gradient information. 
+In recent years many learning rate schedules have been proposed to improve the training of machine learning models. A good comparison of these methods can be found **here** and **here**. 
 
-Furthermore, the learning rate schedule of some of these methods approach very small learning rates at the end of a training period (learning rates with exponential decay, one-cycle learning rate policy). However, these methods are not very plausible from a biological point of view, since the model will not learn new information as well at the end of training as it did at the beginning of training, when the learning rate was higher. Small learning rates prevent the model from reaching a better local minima if new information are available.
+Most of these methods have in common, that they do not take information such as loss or gradient information into account provided by the model during the training process. 
 
-For this reason, cyclic learning rate schedules may be the better option for continous learning. However, even here it is not always easy to find an optimal learning rate. Not to mention the period length of the learning rate to be run through.
+Furthermore, the learning rate of some of these methods approach very small values at the end of the training period (learning rates with exponential decay, one-cycle learning rate policy). 
 
-For this reason, we can use the gradient information provided by the model to determine an adaptive learning rate at every backpropagation gradient descent step.
+However, such learning rate policies are not very plausible from a biological point of view since the model will not learn new information as well at the end of training as it did at the beginning of training, when the learning rate was higher. Small learning rates prevent the model from reaching a better local minima if new information are available. Therefore, such methods work best for a fixed set of data that does not change during training. 
+
+For this reason, cyclic learning rate policies may be the better option for continous learning. However, also in the case of cyclic learning rate schedules, it can be hard to find optimal parameters such as minimal and maximal learning rate such as the period length of one cycle.
+
+To overcome these problems, we can use the gradient information provided by the model itself to compute an adaptive learning rate at every optimization step.
 
 ## Method
 
