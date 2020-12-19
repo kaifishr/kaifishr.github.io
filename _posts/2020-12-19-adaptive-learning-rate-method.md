@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "An Adaptive Learning Rate Method for Gradient Descent Algorithms"
-date:   2020-12-19 17:30:00
+date:   2020-12-18 17:30:42
 ---
 
 **TL;DR**: Gradient information can be used to compute adaptive learning rates that allow gradient descent algorithms to converge much faster.
@@ -10,20 +10,18 @@ date:   2020-12-19 17:30:00
 
 ## Introduction 
 
-In this blog post I present an adaptive learning rate method for gradient descent optimization algorithms (to the best of my knowledge, this method has not yet been mentioned in the literature). 
+In this blog post I present an adaptive learning rate method for gradient descent optimization algorithms. To the best of my knowledge, this method has not yet been mentioned in the literature.
 
 The proposed technique uses gradient information that allow to either compute parameter-wise or global adaptive learning rates. In more detail, the learning rate is treated as a differentiable function allowing to propagate the loss information back to the learning rate where it can then be adjusted accordingly.
 
-The method can easily be applied to popular optimization algorithms such as Gradient Descent, Gradient Descent with Momentum, Nestrov Accelerated Gradient, ADAM, to name just a few. In a few simple experiments I show, that these optimization algorithm show better performance when equipped with this adaptive learning rate method compared to fixed learning rate.
+The method can easily be applied to popular optimization algorithms such as Gradient Descent, Gradient Descent with Momentum, Nestrov Accelerated Gradient, or Adam, to name just a few. In a few simple experiments I show, that these optimization algorithms show better performance when equipped with the adaptive learning rate method introduced in this post compared to fixed learning rate.
 
 
 ## Related Work
 
 In recent years many learning rate schedules have been proposed to improve the training of machine learning models. Most of these methods have in common, that they do not take information such as the loss or gradient information into account that is provided by the model during the training process. 
 
-Furthermore, the learning rate of some of these methods approach very small values at the end of the training period such as learning rate methods with exponential decay or one-cycle learning rate policies.
-
-However, such learning rate policies are not very plausible from a biological point of view since the model will not learn new information as well at the end of training as it did at the beginning of training when the learning rate was higher. Such small learning rates prevent the model from reaching better local minima if new information is available. Therefore, such methods work best for a fixed set of data that does not change during training. 
+The learning rate of some of these methods approach very small values at the end of training such as learning rate methods with exponential decay or one-cycle learning rate policies. However, such learning rate policies are not very plausible from a biological point of view since the model will not learn new information as well at the end of training as it did at the beginning of training when the learning rate was higher. Such small learning rates prevent the model from reaching better local minima if new information is available. Therefore, these methods work best for a fixed set of data that does not change during training. 
 
 For this reason, cyclic learning rate policies may be the better option for continuous learning. However, also in the case of cyclic learning rate schedules, it can be hard to find optimal parameters such as the minimal and maximal learning rate or the period length of one cycle.
 
@@ -31,7 +29,7 @@ To overcome these problems, we can use the gradient information provided by the 
 
 ## Method
 
-In this section we derive an adaptive learning rate update scheme for gradient descent optimization algorithms. Stochastic gradient descent computes the gradient of a loss function $$L$$ with respect to the parameters $$\boldsymbol{w}$$. The update rule for each parameter can be written as follows:
+In this section we derive an adaptive learning rate update scheme for gradient descent optimization algorithms. Stochastic gradient descent computes the gradient of a loss function $L$ with respect to the parameters $w$. The update rule for each parameter can be written as follows:
 
 \begin{equation} \label{eq:weight_update}
 w_i^{(t+1)} = w_i^{(t)} - \eta_{i}^{(t)} \frac{dL^{(t)}}{dw_i^{(t)}} 
@@ -58,20 +56,20 @@ Now we can use Equation \eqref{eq:weight_update} to rewrite the right-hand side 
 By substituting the last term of Equation \eqref{eq:dLdeta} with the result of Equation \eqref{eq:dwdeta} we get:
 
 \begin{equation}\label{eq:dLdeta_2}
-    \frac{dL^{(t)}}{d\eta_{i}^{(t-1)}} = -\frac{dL^{(t)}}{dw^{(t)}}\frac{dL^{(t-1)}}{dw_{i}^{(t-1)}}
+    \frac{dL^{(t)}}{d\eta_{i}^{(t-1)}} = -\frac{dL^{(t)}}{dw_i^{(t)}}\frac{dL^{(t-1)}}{dw_{i}^{(t-1)}}
 \end{equation}
 
 Now Equation \eqref{eq:dLdeta_2} can be inserted into Equation \eqref{eq:learning_rate_update} to get the final result which is an update rule that allows to compute parameter-wise adaptive learning rates
 
 \begin{equation}\label{eq:learning_rate_update_2}
-    \eta_{i}^{(t)} = \eta_{i}^{(t-1)} + \alpha \frac{dL^{(t)}}{dw^{(t)}}\frac{dL^{(t-1)}}{dw_{i}^{(t-1)}}
+    \eta_{i}^{(t)} = \eta_{i}^{(t-1)} + \alpha \frac{dL^{(t)}}{dw_i^{(t)}}\frac{dL^{(t-1)}}{dw_{i}^{(t-1)}}
 \end{equation}
 
 Here, we can make several interesting observations. The update rule uses the gradients of the current and last time step to determine the next learning rate. 
 
 The product of the old and the new gradient allows for two different cases. If both gradients are either positive or negative, the result is positive resulting in an increase of the learning rate for the next weight update. This seems to make sense since subsequent gradients with the same sign indicate that there is a clear direction within the loss landscape and that the error is probably moving towards a local minimum. 
 
-On the other hand, successive gradients with different signs may indicate that there is no clear direction for the gradient descent in the loss landscape. In this case, the product of both gradients is negative causing the learning rate for the considered parameter to decrease. At this point it is important to note that this method allows the learning rate to become negative. Decreasing the learning rate allows a more careful gradient descent or even an ascent if the learning rater becomes negative. This can help to escape local minima.
+On the other hand, successive gradients with different signs may indicate that there is no clear direction for the gradient descent in the loss landscape. In this case, the product of both gradients is negative causing the learning rate for the considered parameter to decrease. At this point it is important to note that this method allows the learning rate to become negative. Decreasing the learning rate allows a more careful gradient descent or even an ascent if the learning rater becomes negative. This may be beneficial to escape from local minima.
 
 By inserting Equation \eqref{eq:learning_rate_update_2} into Equation \eqref{eq:weight_update} we obtain the following expression for the weight update rule with adaptive learning rate:
 
@@ -81,7 +79,7 @@ By inserting Equation \eqref{eq:learning_rate_update_2} into Equation \eqref{eq:
 
 As can be seen, the newly introduced parameter $$\alpha$$ determines the effect of the correction term on the weight update.
 
-With the derivation above it is also possible to derive an update scheme for a global learning rate $$\eta^{(t)}$$ that is the same for all parameters. In this case we use the gradient information of all parameters to compute a single learning rate. To do this, we can write the last term in Equation \eqref{eq:learning_rate_update} as follows
+It is also possible to derive an update scheme for a learning rate $$\eta^{(t)}$$ that is the same for all parameters. In this case we pool the gradient information of all parameters to compute a single global learning rate. To do this, we can write the last term of Equation \eqref{eq:learning_rate_update} as follows
 
 \begin{equation}\label{eq:dLdeta_global}
     \frac{dL^{(t)}}{d\eta^{(t-1)}} = \frac{1}{||\Omega||} \sum_{i \in \Omega} \frac{dL^{(t)}}{dw_{i}^{(t)}}\frac{dw_{i}^{(t)}}{d\eta^{(t-1)}}
@@ -99,13 +97,11 @@ By inserting Equation \eqref{eq:dLdeta_global_2} into Equation \eqref{eq:learnin
     \eta^{(t)} = \eta^{(t-1)} + \alpha \frac{1}{||\Omega||} \sum_{i \in \Omega} \frac{dL^{(t)}}{dw_{i}^{(t)}}\frac{dL^{(t-1)}}{dw_{i}^{(t-1)}}
 \end{equation}
 
-We can now insert Equation \eqref{eq:learning_rate_update_global} into Equation \eqref{eq:weight_update} to obtain the weight update rule for a global adaptive learning rate
+We can now insert Equation \eqref{eq:learning_rate_update_global} into Equation \eqref{eq:weight_update} to obtain the weight update rule for a global adaptive learning rate:
 
 \begin{equation}\label{eq:weight_update_global}
     w_i^{(t+1)} = w_i^{(t)} - \eta^{(t-1)}\frac{dL^{(t)}}{dw_i^{(t)}} - \frac{\alpha}{||\Omega||}\frac{dL^{(t)}}{dw_i^{(t)}} \sum_{j \in \Omega} \frac{dL^{(t)}}{dw_{j}^{(t)}}\frac{dL^{(t-1)}}{dw_{j}^{(t-1)}} 
 \end{equation}
-
-As we can see, the proposed method uses gradient information provided by the current and past time step to determine a learning rate for the next gradient descent step. The method allows to compute an adaptive global learning rate that determines the adjustment of all weights or parameter-wise adaptive learning rates. Moreover, the proposed method for determining adaptive learning rates is very easy to implement.
 
 ## Implementation
 
@@ -145,12 +141,6 @@ def gradient_descent():
 Given the gradient descent optimizer as implemented above, we can now add the adaptive learning rate method to the algorithm by caching the new gradients to determine the new learning rate based on the last two gradients and then performing gradient descent. Afterwards, the new gradients are cached for the next optimization step.
 
 ```python
-eta_x = eta 
-eta_y = eta 
-
-dx_old = 0.0
-dy_old = 0.0
-
 def gradient_descent():
     dx = dfdx(x, y)
     dy = dfdy(x, y)
@@ -165,7 +155,7 @@ def gradient_descent():
     dy_old = dy
 ```
 
-The next example shows the integration of an adaptive learning step in the case of the Adam optimizer. The implementation steps are the same.
+The next example shows the integration of an adaptive learning rate for the Adam optimizer. The implementation steps are the same.
 
 ```python
 def gradient_descent_adam():
@@ -208,42 +198,38 @@ To better understand the behavior of these methods we can visualize the gradient
 
  $$f(x,y) = (1.5 - x + xy)^2 + (2.25 - x + xy^2)^2 + (2.625 - x + xy^3)^2$$
 
-Beale's function has a global minimum at $$(x,y)=(3,0.5)$$ which is indicated by a black star in the results section.
-
-In order to determine an optimal learning rate $$\eta$$ as well as the hyperparameter $$\alpha$$ for each optimizer, a grid search was performed beforehand. The optimal hyperparameter is determined by how fast the global minimum is reached. To measure the speed of convergence of different optimizers I used a loss function that is defined by the Euclidean distance to the global minimum.
+In order to determine an optimal learning rate $$\eta$$ as well as the hyperparameter $$\alpha$$ for each optimizer, a grid search was performed beforehand. The optimal hyperparameter is determined by how fast the global minimum is reached. To measure the speed of convergence of different optimizers I used a loss function that is defined as the Euclidean distance to the global minimum.The following table shows the used hyperparameters:
 
 | Hyperparameter | GD | GD+ | GDM | GDM+ | NAG | NAG+ | Adam | Adam+ |
 |----------------|----|-----|-----|------|-----|------|------|-------|
 | $$\eta$$ | 0.01 | 0.01 | 0.015 | 0.01 | 0.006 | 0.006 | 0.0005 | 0.0005 |
 | $$\alpha$$ | 0 | 1e-4 | 0 | 1e-5 | 0 | 1e-6 | 0 | 1e-8 |
 
-Please note, that the initial learning rate for all optimizers with adaptive learning rate are equal or smaller compared to the standard algorithm.
-
-For other hyperparameters, frequently used values found in the literature were used:
+Please note, that the initial learning rate for all optimizers with adaptive learning rate are equal or smaller compared to the standard algorithm. For other hyperparameters, frequently used values found in the literature were used:
 
 $$\gamma=0.5$$, $$\beta_1=0.9$$, $$\beta_2=0.99$$, $$\epsilon=1e-8$$
 
 ## Results
 
-For better comparability, results are shown for one optimizer at a time.
+For better comparability, results are shown for one optimizer at a time. Beale's function has a global minimum at $$(x,y)=(3,0.5)$$ which is indicated by a black star in the results section.
 
 ### Gradient Descent
 
-The following figure shows the behavior of the classic Gradient Descent (GD) algorithm. We see that the algorithms equipped with an adaptive learning rate (GD+) approaches the global minimum on a similar path but with much larger steps. 
+The following figure shows the behavior of the classic Gradient Descent (GD) algorithm. We see that the algorithms equipped with an adaptive learning rate (GD+) approaches the global minimum on a similar path but with much larger steps. Near the global minimum, larger oscillations are observed at the beginning of the optimization for the optimizer with adaptive learning rate.
 
 ![](/assets/images/post6/gd_gd.png)
 
-This behavior is also reflected in the loss as apparent in the next figure. The loss shows that the adaptive learning rate not only allows to approach the global minimum much faster, it also gets about an order of magnitude closer after convergence.
+This behavior is also reflected in the loss as the next figure shows. The loss shows that the adaptive learning rate not only allows to approach the global minimum much faster, it also gets about an order of magnitude closer after convergence.
 
 ![](/assets/images/post6/loss_gd.png)
 
 ### Gradient Descent with Momentum
 
-In the case with momentum, the results behave similarly to those for the classic gradient descent. Due to the adaptive learning rate, the global minimum is reached in a more direct way and with larger steps.
+In the case with momentum, the results behave similarly to those for the classic gradient descent. The optimizer with adaptive learning rates reaches the global minimum in a more direct way and and with larger steps.
 
 ![](/assets/images/post6/gd_gdm.png)
 
-Here we see again, that the optimizer equipped with an adaptive learning rate converges much faster and also gets much closer to the global minimum.
+Here we see again, that the optimizer equipped with an adaptive learning rate converges much faster and also gets closer to the global minimum.
 
 ![](/assets/images/post6/loss_gdm.png)
 
@@ -253,7 +239,7 @@ In case of the Nestrov Accelerated Gradient (NAG) optimizer with a fixed learnin
 
 ![](/assets/images/post6/gd_nag.png)
 
-Even thought the gradient descent with NAG+ does not approach the minimum right from the start, it converges with a slight delay much faster requiring only half the steps to converge compared to NAG.
+Even thought the gradient descent with NAG+ does not approach the minimum right from the start, it converges with a slight delay much faster requiring only about half the steps to converge compared to NAG.
 
 ![](/assets/images/post6/loss_nag.png)
 
