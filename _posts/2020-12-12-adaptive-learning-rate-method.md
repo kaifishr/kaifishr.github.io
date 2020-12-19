@@ -233,47 +233,54 @@ For better comparability, results are shown for one optimizer at a time.
 
 The following figure shows the behaviour of the classic Gradient Descent (GD) algorithm. We see that the algorithms equipped with an adaptive learning rate (GD+) approaches the global minimum on a similar path but with much larger steps. 
 
-![](/assets/images/post6/gd_beale_gd_alpha_1em5.png)
+![](/assets/images/post6/gd_gd.png)
 
 This behaviour is also reflected in the loss as apparent in the next figure. The loss shows that the adaptive learning rate not only allows to approach the global minimum much faster, it also gets about an order of magnitued closer after convergence.
 
-![](/assets/images/post6/loss_gd_beale_1em4.png)
+![](/assets/images/post6/loss_gd.png)
 
 ### Gradient Descent with Momentum
 
 In the case with momentum, the results behave similarly to those for the classic gradient descent. Due to the adaptive learning rate, the global minimum is reached in a more direct way and with larger steps.
 
-![](/assets/images/post6/gd_beale_gdm_alpha_5em5.png)
+![](/assets/images/post6/gd_gdm.png)
 
 Here we see again, that the optimizer equipped with an adaptive learning rate converges much faster and also gets much closer to the global minimum.
 
-![](/assets/images/post6/loss_gdm_beale_5em4.png)
+![](/assets/images/post6/loss_gdm.png)
 
 ### Nestrov Accelerated Gradient
 
 In case of the Nestrov Accelerated Gradient (NAG) optimizer with a fixed learning rate, the optimizer approaches the global minimum more carfully compared to the method equipped with an adaptive learning rate. Here we see that NAG+ again behaves more aggressive right at the beginning of the optimization process.
 
-![](/assets/images/post6/gd_beale_nag_alpha_1em6.png)
+![](/assets/images/post6/gd_nag.png)
 
 Even thought the gradient descent with NAG+ does not approach the minimum right from the start, it converges with a slight delay much faster requiring only half the steps to converge compared to NAG.
 
-![](/assets/images/post6/loss_nag_beale.png)
+![](/assets/images/post6/loss_nag.png)
 
 ### Adam
 
 The next figure shows the results for the Adam optimization algorithm. The results show that the Adam algorithm with constant learning rate approaches to global minimum in a steady and a very carfully way. If we equip the Adam optimizer with an parameter-wise adaptive learning rate, we can observe, that the gradient descent is much more aggresive meaning, that the global minimum is approached with larger steps and in a more direct way.
 
-![](/assets/images/post6/gd_beale_adam_alpha_1em7.png)
+![](/assets/images/post6/gd_adam.png)
 
 If we look at how the loss behaves we see how much faster the optimizer with adaptive learning rate converges. Two things in particular stand out here. Adam+ get very close to the global minimum before it than oscillates much further away around the minimum. On the other hand, even though Adam takes much for time to converge, it get closer to the global minimum by almost two order of magnitudes.
 
-![](/assets/images/post6/loss_adam_beale.png)
+![](/assets/images/post6/loss_adam.png)
+
+### Visualization of Adaptive Learning Rates
+
+The following figure shows the learning rates $\eta_x$ and $\eta_y$ for each optimizer used in the experiments. Visualizing the adaptive learning rates show, how they are subject to major changes, especially at the beginning of the optimization process.
+
+![](/assets/images/post6/lr.png)
+
 
 ## Discussion
 
-The visualization of the gradient descent already indicates that the global minimum is reached faster for optimizers that use the adaptive learning rate presented above.
+The single most striking observation to emerge from the experimental results was, that the global minimum is reached much faster for optimizers equipped with the adaptive learning rate presented above. It is also noteworthy, that in most cases, an adaptive learning rate also results in a smaller error after convergence.
 
-Using an adaptive learning rate allows to ... less time necessary for hyperparameter search. In principle it is possible to start with a learning rate of zero.
+As the visualization of the learning rate has shown, there is a sharp increases right at the beginning of the optimization process due to the large gradients caused by the test function. In the further course, the learning rate then adapts to the topological conditions before it converges towards a certain value. The convergence results from the fact that the gradients become very small when the global minimum is reached.
 
 ## Outlook
 
