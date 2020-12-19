@@ -245,34 +245,32 @@ Even thought the gradient descent with NAG+ does not approach the minimum right 
 
 ### Adam
 
-The next figure shows the results for the Adam optimization algorithm. The results show that the Adam algorithm with constant learning rate approaches to global minimum in a steady and a very carefully way. If we equip the Adam optimizer with an parameter-wise adaptive learning rate, we can observe, that the gradient descent is much more aggressive meaning, that the global minimum is approached with larger steps and in a more direct way.
+The next figure shows the results for the Adam optimization algorithm. The results show that the Adam algorithm with constant learning rate approaches to global minimum in a steady and very carefully way. If we equip the Adam optimizer with a parameter-wise adaptive learning rate, we observe, that the gradient descent is again much more aggressive, which means that the global minimum is approached with larger steps and in a more direct way.
 
 ![](/assets/images/post6/gd_adam.png)
 
-If we look at how the loss behaves we see how much faster the optimizer with adaptive learning rate converges. Two things in particular stand out here. Adam+ get very close to the global minimum before it than oscillates much further away around the minimum. On the other hand, even though Adam takes much for time to converge, it gets closer to the global minimum by almost two order of magnitudes.
+By looking at the loss we see how much faster the optimizer with adaptive learning rate converges. Interestingly, even though standard Adam takes much for time to converge, it gets closer to the global minimum by about one order of magnitude.
 
 ![](/assets/images/post6/loss_adam.png)
 
 ### Visualization of Adaptive Learning Rates
 
-The following figure shows the learning rates $\eta_x$ and $\eta_y$ for each optimizer used in the experiments. Visualizing the adaptive learning rates show, how they are subject to major changes, especially at the beginning of the optimization process.
+The following figure shows the learning rates $\eta_x$ and $\eta_y$ for each optimizer used in the experiments. Visualizing the adaptive learning rates shows, how the learning rates are subject to major changes, especially at the beginning of the optimization process. In all experiments, the learning rates converged towards a certain step size.
 
 ![](/assets/images/post6/lr.png)
 
 
 ## Discussion
 
-The single most striking observation to emerge from the experimental results was, that the global minimum is reached much faster for optimizers equipped with the adaptive learning rate presented above. It is also noteworthy, that in most cases, an adaptive learning rate also results in a smaller error after convergence.
+The single most striking observation to emerge from the experimental results was, that the global minimum is reached much faster for optimizers equipped with the adaptive learning rate presented above. It is also noteworthy, that in most cases, an adaptive learning rate also resulted in a smaller error after convergence.
 
-As the visualization of the learning rate has shown, there is a sharp increases right at the beginning of the optimization process due to the large gradients caused by the test function. In the further course, the learning rate then adapts to the topological conditions before it converges towards a certain value. The convergence results from the fact that the gradients become very small when the global minimum is reached.
+As the visualization of the learning rates has shown, there is a sharp increases right at the beginning of the optimization process, probably caused due to large gradients of the test function. In the further course, the learning rate then adapts to the topological conditions before it then converges towards a certain value. The convergence results from the fact that the gradients become very small when the global minimum is reached.
 
 ## Outlook
 
-I showed that a new gradient-based method for adaptive learning rates can significantly increase the performance of popular gradient descent optimization algorithms such as GD, GDM, NAG or Adam.
+I showed that a new gradient-based method for adaptive learning rates can significantly increase the performance of popular gradient descent optimization algorithms such as GD, GDM, NAG or Adam. Not only do these optimizers equipped with the adaptive learning rate converge much faster, in most cases they also get much closer to the global minimum in the experiments. 
 
-Not only do these optimizers equipped with the adaptive learning rate converge much faster, in most cases they also get much closer to the global minimum in the experiments.
-
-In a next step, this method should be used in the training of a larger machine learning model to better assess its actual performance.
+In a next step, this method should be applied to a larger machine learning model to better assess its actual performance and its advantages and disadvantages. Furthermore, one could investigate which initial values for the parameter $\alpha$ is reasonable and how numerical stability of the method can be guaranteed.
 
 ---
 
