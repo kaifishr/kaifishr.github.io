@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "An Adaptive Learning Rate Method for Gradient Descent Algorithms"
-date:   2020-12-12 12:12:12
+date:   2020-12-19 17:30:00
 ---
 
 **TL;DR**: Gradient information can be used to compute adaptive learning rates that allow gradient descent algorithms to converge much faster.
