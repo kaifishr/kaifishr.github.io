@@ -8,7 +8,7 @@ permalink: /about/
 
 ***
 
-![me](/assets/bla.png){: style="float: right"}
+![me](/assets/images/me.png){: style="float: right"}
 
 I'm a physics graduate with a great interest in computer science. I specialized in the field of computational physics and machine learning. I am constantly working my way through the field of physics, computer science and machine learning, so I have picked up a few things. 
 
