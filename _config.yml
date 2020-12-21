@@ -1,10 +1,11 @@
 title: Kai Fabi blog
+
 author: 
     name: Kai Fabi
     email: str('kaifabi')+'@'+'.'.join(['posteo','net'])
 
 description: >- # this means to ignore newlines until "baseurl:"
-  Fun with neural networks and more. I basically brain dump here anything that comes to my mind.
+    Thoughts from former stardust.
 
 show_excerpts: false
 
