@@ -12,20 +12,22 @@ date:   2020-12-18 17:30:42
 
 In this blog post I present an adaptive learning rate method for gradient descent optimization algorithms. To the best of my knowledge, this method has not yet been mentioned in the literature.
 
-The proposed technique uses gradient information that allow to either compute parameter-wise or global adaptive learning rates. In more detail, the learning rate is treated as a differentiable function allowing to propagate the loss information back to the learning rate where it can then be adjusted accordingly.
+The proposed technique uses gradient information that allow to either compute parameter-wise or global adaptive learning rates. In more detail, the learning rate is treated as a differentiable function allowing to propagate the loss information back so that the learning rate can be adjusted accordingly.
 
-The method can easily be applied to popular optimization algorithms such as Gradient Descent, Gradient Descent with Momentum, Nestrov Accelerated Gradient, or Adam, to name just a few. In a few simple experiments I show, that these optimization algorithms show better performance when equipped with the adaptive learning rate method introduced in this post compared to fixed learning rate.
+The method can easily be applied to popular optimization algorithms such as Gradient Descent, Gradient Descent with Momentum, Nestrov Accelerated Gradient, or Adam, to name just a few. In a few simple experiments I show, that these optimization algorithms show better performance when equipped with the adaptive learning rate method introduced in this post compared to their standard implementation.
 
 
 ## Related Work
 
-In recent years many learning rate schedules have been proposed to improve the training of machine learning models. Most of these methods have in common, that they do not take information such as the loss or gradient information into account that is provided by the model during the training process. 
+In recent years many learning rate schedules have been proposed that work on top of optimizers to improve the training of machine learning models. Most of these methods have in common, that they do not take information such as the loss or gradient information into account that is provided by the model during the training process. 
 
-The learning rate of some of these methods approach very small values at the end of training such as learning rate methods with exponential decay or one-cycle learning rate policies. However, such learning rate policies are not very plausible from a biological point of view since the model will not learn new information as well at the end of training as it did at the beginning of training when the learning rate was higher. Such small learning rates prevent the model from reaching better local minima if new information is available. Therefore, these methods work best for a fixed set of data that does not change during training. 
+The learning rates of some of these methods approach very small values at the end of training such as learning rate methods with exponential decay or one-cycle learning rate policies. However, such learning rate policies are not very plausible from a biological point of view since the model will not learn new information as well at the end of training as it did at the beginning of training when the learning rate was higher. Such small learning rates prevent the model from reaching better local minima if new information is available. Therefore, these methods work best for a fixed set of data that does not change during training. 
 
 For this reason, cyclic learning rate policies may be the better option for continuous learning. However, also in the case of cyclic learning rate schedules, it can be hard to find optimal parameters such as the minimal and maximal learning rate or the period length of one cycle.
 
-To overcome these problems, we can use the gradient information provided by the model itself to compute an adaptive learning rate at every optimization step. This will be the main contribution of this blog post.
+To avoid the problem of specifiying an additional learning rate schedule, optimizers such as Adam, AdaGrad, AdaDelta, or RMSprop adaptively change the step size to take larger gradient descent steps in shallow and small steps in steep directions by tracking both, the gradient as well as the second moment of the gradient. In practice, however, even these optimizers are often equipped with an additional learning rate policy to improve the result. But this leads to the same problems as just described.
+
+To overcome the need of specifiying a learning rate schedule manually, we can use the gradient information provided by the model itself to compute an adaptive learning rate at every optimization step. This will be the main contribution of this blog post.
 
 ## Method
 
