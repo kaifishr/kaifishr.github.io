@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "NeuralGrid: A Grid-based Neural Network Architecture"
+title: "[DRAFT] NeuralGrid: A Grid-based Neural Network Architecture"
 date:   2020-12-28 11:55:23
 ---
 
-**TL;DR**: bla foo 
+**TL;DR**: Grid-based neural networks are really hard to train.
 
 ---
 
