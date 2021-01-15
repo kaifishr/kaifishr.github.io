@@ -10,9 +10,9 @@ permalink: /about/
 
 ![me](/assets/images/me.png){: style="float: right"}
 
-I'm a physicist by training with a great interest in computer science. I specialized in the field of computational physics and machine learning. I'm constantly working my way through the field of physics, computer science and machine learning, so I have picked up a few things. 
+I'm a physicist by training with a great interest in computer science and specialized in the field of computational physics and machine learning. I'm constantly working my way through the field of physics, computer science and machine learning, so I have picked up a few things. 
 
-I enjoy coding, working with data, trying out new ideas, and solving real world problems. I mostly use Python, C++, and C to get things done and like to automate stuff with Bash. Currently, I am working as a machine learning research engineer in AI safety in the automotive industry.
+I enjoy coding, working with data, trying out new ideas, and solving real world problems. I mostly use Python, C++, and C to get things done and like to automate stuff with Bash. Currently, I'm working as a machine learning research engineer in AI safety in the automotive industry.
 
 I am committed to do my part to make humanity be the best it can be by using technology to maximize the probability that the future is good.
 
