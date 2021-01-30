@@ -57,14 +57,14 @@ Depending on the information processing operation within the VGG network, releva
 Let’s start with the convolutional operations. Here we use the same strides and padding as during the forward pass. We also make sure that the activations are set to one if we reached the input layer. This ensures that the image’s pixel values are not used to compute the relevance scores for the input. Otherwise, we would end up with a biased result. The remaining part corresponds to the $z^+$-rule. In contrast to the information processing in fully connected layers, convolutional operations on feature maps oftentimes overlap depending on the stride. It is therefore necessary to sum up the relevance scores of the feature map activations.
 
 ```python
-    def relprop_conv(self, x, w, r, name, strides=(1, 1, 1, 1), padding='SAME'):
-        if name == 'block1_conv1':
-            x = tf.ones_like(x)
-        w_pos = tf.maximum(w, 0.0)
-        z = tf.nn.conv2d(x, w_pos, strides, padding) + self.epsilon
-        s = r / z
-        c = tf.compat.v1.nn.conv2d_backprop_input(tf.shape(x), w_pos, s, strides, padding)
-        return c * x
+def relprop_conv(self, x, w, r, name, strides=(1, 1, 1, 1), padding='SAME'):
+    if name == 'block1_conv1':
+        x = tf.ones_like(x)
+    w_pos = tf.maximum(w, 0.0)
+    z = tf.nn.conv2d(x, w_pos, strides, padding) + self.epsilon
+    s = r / z
+    c = tf.compat.v1.nn.conv2d_backprop_input(tf.shape(x), w_pos, s, strides, padding)
+    return c * x
 ```
 
 ### Pooling
@@ -72,18 +72,18 @@ Let’s start with the convolutional operations. Here we use the same strides an
 There are two different approaches to send back relevance scores through pooling layers. Either the relevance scores are assigned proportionally based on the neurons' activation strength or the winner takes it all principle is chosen, in which the highest activation is assigned the entire relevance. In general, max pooling leads to crisper relevance maps by assigning high relevance scores to fewer input features.
 
 ```python
-    def relprop_pool(self, x, r, ksize=(1, 2, 2, 1), strides=(1, 2, 2, 1), padding='SAME'):
-        if self.pooling_type == 'avg':
-            z = tf.nn.avg_pool(x, ksize, strides, padding) + self.epsilon
-            s = r / z
-            c = gen_nn_ops.avg_pool_grad(tf.shape(x), s, ksize, strides, padding)
-        elif self.pooling_type == 'max':
-            z = tf.nn.max_pool(x, ksize, strides, padding) + self.epsilon
-            s = r / z
-            c = gen_nn_ops.max_pool_grad_v2(x, z, s, ksize, strides, padding)
-        else:
-            raise Exception('Error: no such unpooling operation.')
-        return c * x
+def relprop_pool(self, x, r, ksize=(1, 2, 2, 1), strides=(1, 2, 2, 1), padding='SAME'):
+    if self.pooling_type == 'avg':
+        z = tf.nn.avg_pool(x, ksize, strides, padding) + self.epsilon
+        s = r / z
+        c = gen_nn_ops.avg_pool_grad(tf.shape(x), s, ksize, strides, padding)
+    elif self.pooling_type == 'max':
+        z = tf.nn.max_pool(x, ksize, strides, padding) + self.epsilon
+        s = r / z
+        c = gen_nn_ops.max_pool_grad_v2(x, z, s, ksize, strides, padding)
+    else:
+        raise Exception('Error: no such unpooling operation.')
+    return c * x
 ```
 
 ### Flattening
@@ -91,8 +91,8 @@ There are two different approaches to send back relevance scores through pooling
 The flattening operation connects the convolutional part with the fully connected part of the network. Since this operation consists only of reshaping the last feature maps, the backward pass also only consists of reshaping the relevance scores back from a vector representation into the form of feature maps.
 
 ```python
-    def relprop_flatten(self, x, r):
-        return tf.reshape(r, tf.shape(x))
+def relprop_flatten(self, x, r):
+    return tf.reshape(r, tf.shape(x))
 ```
 
 ### Fully connected layers
@@ -100,12 +100,12 @@ The flattening operation connects the convolutional part with the fully connecte
 In the fully connected part of the VGG network, the computation of relevance scores follows directly Equation \eqref{eq:zplus}. The implementation is relatively simple compared to convolutional layers. Namely, there are no shared weights and also no overlapping areas in information processing during the feedforward pass.
 
 ```python
-    def relprop_dense(self, x, w, r):
-        w_pos = tf.maximum(w, 0.0)
-        z = tf.matmul(x, w_pos) + self.epsilon
-        s = r / z
-        c = tf.matmul(s, tf.transpose(w_pos))
-        return c * x
+def relprop_dense(self, x, w, r):
+    w_pos = tf.maximum(w, 0.0)
+    z = tf.matmul(x, w_pos) + self.epsilon
+    s = r / z
+    c = tf.matmul(s, tf.transpose(w_pos))
+    return c * x
 ```
 
 

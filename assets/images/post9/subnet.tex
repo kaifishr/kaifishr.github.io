@@ -1,0 +1,103 @@
+\documentclass[crop, tikz]{standalone}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, decorations.pathreplacing}
+\begin{document}
+
+\tikzset{Neuron/.style={circle, draw, inner sep=6, line width=0.1}}
+\tikzset{SubnetNeuron/.style={circle, draw, inner sep=3, line width=0.05}}
+\tikzset{NetworkConnection/.style={line width=0.5}}
+\tikzset{SubnetConnection/.style={line width=1, color=black!30!green}}
+
+\begin{tikzpicture}
+
+\pgfmathsetmacro{\X}{2}
+\pgfmathsetmacro{\NetworkLayerSize}{3}
+\pgfmathsetmacro{\SubnetLayerSize}{4}
+\pgfmathsetmacro{\SubnetLayers}{2}
+
+\pgfmathsetmacro{\xdiam}{16}
+\pgfmathsetmacro{\ydiam}{16}
+
+\pgfmathsetmacro{\dX}{\xdiam / 3}
+\pgfmathsetmacro{\dY}{0.75 * (\ydiam / \NetworkLayerSize)}
+
+\pgfmathsetmacro{\dx}{\xdiam / 9} % for subnetwork with two hidden layers
+\pgfmathsetmacro{\dy}{0.75}
+
+\pgfmathsetmacro{\yshift}{\dy*0.5*\SubnetLayerSize + \dy*0.5}
+
+% First hidden layer
+\foreach \name / \Y in {1,...,\NetworkLayerSize} {
+    \node[Neuron] (H1-\name) at (0.0,-\dY*\Y) {};
+}
+
+% Subnetwork    
+\foreach \a / \Y in {1,...,\NetworkLayerSize} {
+    \node[SubnetNeuron] (S1-\a) at (\dX,-\dY*\Y) {};
+    \foreach \b / \y in {1,...,\SubnetLayerSize} {
+        \node[SubnetNeuron] (S2-\a-\b) at (\dX+\dx,-\dY*\Y+\yshift-\y*\dy) {};
+    }
+    \foreach \b / \y in {1,...,\SubnetLayerSize} {
+        \node[SubnetNeuron] (S3-\a-\b) at (\dX+2*\dx,-\dY*\Y+\yshift-\y*\dy) {};
+    }
+    \node[SubnetNeuron] (S4-\a) at (\dX+3*\dx,-\dY*\Y) {};
+}
+
+% Last hidden layer
+\foreach \name / \Y in {1,...,\NetworkLayerSize} {
+    \node[Neuron] (H2-\name) at (2*\dX + 3*\dx,-\dY*\Y) {};
+}
+    
+% Connections
+
+% Hidden to subnetwork input
+\foreach \i in {1,...,\NetworkLayerSize}{
+    \foreach \j in {1,...,\NetworkLayerSize}
+    {
+        \path[NetworkConnection] (H1-\i) edge (S1-\j);
+    }
+}
+
+% Subnetwork input to hidden
+\foreach \i in {1,...,\NetworkLayerSize} {
+    \foreach \j in {1,...,\SubnetLayerSize} {
+        \path[SubnetConnection] (S1-\i) edge (S2-\i-\j);
+    }
+}
+
+% Subnetwork output to hidden
+\foreach \i in {1,...,\NetworkLayerSize} {
+    \foreach \j in {1,...,\SubnetLayerSize} {
+        \foreach \k in {1,...,\SubnetLayerSize} {
+            \path[SubnetConnection] (S2-\i-\j) edge (S3-\i-\k);
+        }
+    }
+}
+
+% Subnetwork output to hidden
+\foreach \i in {1,...,\NetworkLayerSize} {
+    \foreach \j in {1,...,\SubnetLayerSize} {
+        \path[SubnetConnection] (S4-\i) edge (S3-\i-\j);
+    }
+}
+    
+% Subnetwork output to hidden
+\foreach \i in {1,...,\NetworkLayerSize}{
+    \foreach \j in {1,...,\NetworkLayerSize}
+    {
+        \path[NetworkConnection] (S4-\i) edge (H2-\j);
+    }
+}
+
+% Decoration
+\foreach \i in {1,...,\NetworkLayerSize} {
+    \draw [decorate,decoration={brace,amplitude=5mm,mirror,raise=10mm}] (S1-\i.south east) -- node [below=15mm,black,midway] {$s^{(l)}_\i = s(z_\i;w^{(l)})$} (S4-\i.south west);
+}
+
+\foreach \sign / \i in {-/1,+/2} {
+    \foreach \j in {1,...,\NetworkLayerSize} {
+        \draw [decorate,decoration={brace,amplitude=2mm,raise=3mm}] (H\i-\j.east) -- node [below=5mm,black,midway] {$s^{(l\sign 1)}_\j$} (H\i-\j.west);
+    }
+}
+
+\end{tikzpicture}
+\end{document}
