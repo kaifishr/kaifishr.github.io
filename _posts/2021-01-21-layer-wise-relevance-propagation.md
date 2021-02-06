@@ -167,7 +167,15 @@ The qualitative results seem to be plausible since relevance scores are particul
 
 ## Outlook
 
-This basic implementation is a good starting point for many possible extensions. For example, new rules for the distribution of relevance scores can be added. Furthermore, one can try to transfer the implementation to more modern network architectures like ResNets or DenseNets.
+This basic implementation of layer-wise relevance propagation is a good starting point for many possible extensions and applications. For example, new rules for the distribution of relevance scores can be added. Furthermore, one can try to transfer the implementation to more modern network architectures like ResNets or DenseNets.
+
+With a fast graphics card, it is also possible to perform relevance propagation in real time. The following video shows the result of a short test.
+
+<div align="center">
+<img src="https://github.com/KaiFabi/RealTimeRelevancePropagation/blob/master/video/test.gif">
+</div>
+
+It is interesting to note that relevance scores in the background, especially at the door, disappear entirely when the notebook enters the image, which is then assigned a lot of relevance. The network basically indicates that it has recognized something it is familiar with. This is to be expected since the VGG16 network has also been trained to classify notebooks. [Here][RealTimeLRP] you can find the code for real time relevance propagation.
 
 ---
 
@@ -175,6 +183,7 @@ You find the code for this project [here][github_code].
 
 <!-- Links -->
 
-[github_code]: https://github.com/KaiFabi/LayerwiseRelevancePropagation
 [lrp_paper_1]: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0130140
 [lrp_paper_2]: https://www.sciencedirect.com/science/article/pii/S0031320316303582
+[RealTimeLRP]: https://github.com/KaiFabi/RealTimeRelevancePropagation
+[github_code]: https://github.com/KaiFabi/LayerwiseRelevancePropagation
