@@ -25,3 +25,5 @@ theme: minima
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+
+markdown: GFM
