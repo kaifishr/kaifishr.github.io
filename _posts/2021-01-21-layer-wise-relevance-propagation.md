@@ -172,7 +172,7 @@ This basic implementation of layer-wise relevance propagation is a good starting
 With a fast graphics card, it is also possible to perform relevance propagation in real time. The following video shows the result of a short test.
 
 <div align="center">
-<img src="https://github.com/KaiFabi/RealTimeRelevancePropagation/blob/master/video/test.gif">
+<img src="https://github.com/KaiFabi/RealTimeRelevancePropagation/blob/main/video/test.gif">
 </div>
 
 It is interesting to note that relevance scores in the background, especially at the door, disappear entirely when the notebook enters the image, which is then assigned a lot of relevance. The network basically indicates that it has recognized something it is familiar with. This is to be expected since the VGG16 network has also been trained to classify notebooks. [Here][RealTimeLRP] you can find the code for real time relevance propagation.
