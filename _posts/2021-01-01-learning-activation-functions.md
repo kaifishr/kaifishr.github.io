@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "An Approach to Trainable Activation Functions using Subnetworks"
+title: "Subnetworks as Trainable Activation Functions"
 date:   2021-02-02 21:32:04
 ---
 
@@ -355,6 +355,15 @@ Despite the increased computational complexity of adding subnetworks to neural n
 I hope to see future studies where subnetworks are used in much larger networks, as this is probably the only way to determine their true value.
 
 ---
+
+```bibtex
+@misc{blogpost,
+  title={Subnetworks as Trainable Activation Functions},
+  author={Fabi, Kai},
+  howpublished={\url{https://kaifabi.github.io/2021/02/02/learning-activation-functions.html}},
+  year={2021}
+}
+```
 
 You find the code for this project [here][github_subnetwork].
 

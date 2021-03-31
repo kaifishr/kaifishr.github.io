@@ -1,27 +1,16 @@
 ---
 layout: post
-title: "[DRAFT] NeuralGrid: A Grid-based Neural Network Architecture"
-date:   2021-03-01 12:52:03
+title: "NeuralGrid: A Grid-based Neural Network Architecture"
+date:   2021-03-01 21:30:21
 ---
 
-**TL;DR**: In this post I present a grid-based neural network architecture.
+**TL;DR**: In this post I present a grid-based neural network architecture that allows neurons to form arbitrary network structures during training.
 
 ---
 
-# TODO: 
-
-- Ask in forum how to create sparse matrices as below. Otherwise matrix vector multiplication not possible.
-- Show naive implementation
-- Show that implementation with combining unfolding and element-wise product represent same operation and is much faster.
-- Compare training time for different implementations.
-- Implement neural grid for batch size > 1
-- "Weights are locally shared to distribute the signal within the neural grid."
-- "We have overlapping receptive fields. It therefore follows that every weight in grid receives three gradients."
-- Visualize unfolding operations (tikZ)
-- Can sparse matrix representation be used to justify fan_in =3 and fan_out = 3 (1)?
-
-- (1) Show that mapping of naive implementation can be represented as a sparse matrix operation.
-- (2) Show that unfolding (for kernel size 3) followed by an element wise multiplication can be represented as a sparse matrix.
+TODO: 
+- Add colors to Figure 1 to show that neurons and input / output of grid are the same?
+- "Compared to 2d neural grids, 3d grids can be more shallow as the input features are closer together"
 
 ## Introduction 
 
@@ -31,8 +20,7 @@ In this blog post I present a grid-based neural network architecture which I wil
 <img src="/assets/images/post10/neural_grid.png" width="800"> 
 <b>Figure 1:</b> Basic idea of a grid-based neural network architecture.
 </p>
-
-**TODO: Add colors to Figure 1 to show that neurons and input / output of grid are the same?**
+{: #fig:neuralgrid}
 
 ## Method
 
@@ -60,17 +48,73 @@ The information processing of a single neuron outside the grid, i.e. before and 
 
 Things look a bit different for the mapping inside the grid. Here, the mapping can be described as follows:
 
-\begin{equation} \label{eq:preactivation_grid}
-    z_p = \sum_{q \subset \Omega} w_{pq} x_q + b_p
+\begin{equation} \label{eq:zgrid}
+    z_p = \sum_{q \subset \Omega_p} w_{q} x_{q} + b_p
 \end{equation}
 
-\begin{equation} \label{eq:activation_grid}
+\begin{equation} \label{eq:xgrid}
     x_p = h(z_p)
 \end{equation}
 
-Within the grid, weights are shared by several neurons. In the figure above, each weight within the grid contributes to three neurons in the next layer. This must also be taken into account in the subsequent calculation of the gradients insofar as the error signals for the respective weights must be accumulated.
+In Equation \eqref{eq:zgrid}, $\Omega_p$ represents the receptive field over which the weighted sum is calculated. This is shown for a two dimensional grid and a kernel size of 3 in [Figure 1](#fig:neuralgrid) where the weighted sum over three grid cells is formed. For a three dimensional grid, the receptive field would be of size $k \times k$ ($q \times q$).
 
-The mapping within the grid can also be represented as a special kind of vector-matrix multiplication, which allows to use certain operations provided by PyTorch that allow a massive speedup during training. For an input layer consisting of five neurons, kernel size of 3, and stride 1, Equation \eqref{eq:preactivation_grid} can be written as
+Within the grid, weights are shared by several neurons due to overlapping receptive fields. Due to the neural grid's processing scheme, there are the same number of weights and biases.
+
+As [Figure 1](#fig:neuralgrid) shows, each weight within the grid contributes to three neurons in the consecutive layer. This must also be taken into account in the subsequent calculation of the gradients insofar as the error signals for the respective weights must be accumulated.
+
+The mapping within the grid can also be represented as a special kind of vector-matrix multiplication, which allows to use PyTorch's unfolding operations that allow a massive speedup. In the following a few example for the two and three dimensional case shall demonstrate how the problem can be formulated using unfolding operations.
+
+### Unfolding in a Two Dimensional Neural Grid
+
+For a neural grid layer consisting of activations $\boldsymbol{x}$ and weights $\boldsymbol{w}$ each consisting of five elements, a kernel size of $k=3$, and stride 1, Equation \eqref{eq:zgrid} can be written as
+
+$$
+\label{eq:2dNeuralGridXW}
+\boldsymbol{x} = 
+\begin{pmatrix}
+x_{1}\\
+x_{2}\\
+x_{3}\\
+x_{4}\\
+x_{5}
+\end{pmatrix},
+\boldsymbol{w} = 
+\begin{pmatrix}
+w_{1}\\
+w_{2}\\
+w_{3}\\
+w_{4}\\
+w_{5}
+\end{pmatrix}
+$$
+
+$$
+\label{eq:2dNeuralGridZ}
+\boldsymbol{z} = 
+\begin{pmatrix}
+x_{1}\\
+x_{2}\\
+x_{3}\\
+x_{4}\\
+x_{5}
+\end{pmatrix}
+*
+\begin{pmatrix}
+w_{1}\\
+w_{2}\\
+w_{3}\\
+w_{4}\\
+w_{5}
+\end{pmatrix}
++
+\begin{pmatrix}
+b_{1}\\
+b_{2}\\
+b_{3}\\
+b_{4}\\
+b_{5}
+\end{pmatrix}
+$$
 
 $$
 \label{eq:sparseWeightMatrix}
@@ -99,52 +143,128 @@ b_{5}
 \end{pmatrix}
 $$
 
-In Equation \eqref{eq:sparseWeightMatrix} we see that every weight, except for the weights at the grid's border, is involved in three operations, meaning that these weights receive three error signals or gradients. It can also be seen that every weights final gradient can be obtained by summing along the vertical axis of the weight's matrix corresponding gradient matrix.
+In Equation \eqref{eq:sparseWeightMatrix} we see that every weight, except for the weights at the grid's border, is involved in three operations, meaning that during the backpropagation step, these weights receive three error signals / gradients. It can also be seen that every weights final gradient can be obtained by summing along the vertical axis of the weight's matrix corresponding gradient matrix.
 
-
-
-<!-- progress -->
-
-
-### Backpropagation Gradient Descent
-
-Now we go backwards through the network to determine the gradients. We start computing the gradients for the weight matrix $w$ connecting the grid to the network's output and the biases $b$. To do this, we first need a loss function which is given by
-
-\begin{equation} \label{eq:loss}
-L = \frac{1}{2} \sum_i (y_i - x_i)^2
-\end{equation}
-
-Using the chain rule of calculus we can determine the gradients for the weights and biases.
+However, in terms of memory usage and computational efficiency, Equation \eqref{eq:sparseWeightMatrix} is not very elegant and can be reformulated into a more compact representation
 
 $$
-\begin{multline} \label{eq:dw_output}
-\begin{aligned}
-\frac{dL}{dw_{ij}} &= \frac{dz_i}{dw_{ij}} \cdot \frac{dx_i}{dz_i} \cdot \frac{dL}{dx_i}\\
-                   &= x_j \cdot \underbrace{h'(z_i) \cdot (x_i - y_i)}_{\delta_i}\\
-\end{aligned}
-\end{multline}
+\label{eq:unfoldedFormulation}
+z = 
+\begin{pmatrix}
+\begin{pmatrix}
+0 & w_{1} & w_{2}\\
+w_{1} & w_{2} & w_{3}\\
+w_{2} & w_{3} & w_{4}\\
+w_{3} & w_{4} & w_{5}\\
+w_{4} & w_{5} & 0
+\end{pmatrix}
+\odot
+\begin{pmatrix}
+0 & x_{1} & x_{2}\\
+x_{1} & x_{2} & x_{3}\\
+x_{2} & x_{3} & x_{4}\\
+x_{3} & x_{4} & x_{5}\\
+x_{4} & x_{5} & 0
+\end{pmatrix}
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+1\\
+1\\
+1
+\end{pmatrix}
++
+\begin{pmatrix}
+b_{1}\\
+b_{2}\\
+b_{3}\\
+b_{4}\\
+b_{5}
+\end{pmatrix}
 $$
 
-\begin{equation} \label{eq:db_output}
-\frac{dL}{db_i} = \frac{dz_i}{db_i} \cdot \frac{dx_i}{dz_i} \cdot \frac{dL}{dx_i}
-= h'(z_i) \cdot (x_i - y_i)
-\end{equation}
+where $\odot$ represents the element-wise product of weights and activations. At first glance, the reformulation of Equation \eqref{eq:unfoldedFormulation} does not necessarily look more compact. However, this formulation scales with $\mathcal{O}(k \cdot n)$ and is therefore computationally more efficient compared to the first formulation in Equation \eqref{eq:unfoldedFormulation} that scales with $\mathcal{O}(n^2)$. In the implementation we can express Equation \eqref{eq:unfoldedFormulation} using PyTorch's unfolding operations for blazingly fast computations within the neural grid.
 
-Now we look at the last weighst of the grid. Here we have
+### Unfolding in a Three Dimensional Neural Grid
 
-\begin{equation} \label{eq:dw_grid}
-\frac{dL}{dw_k} = \frac{dz_j}{dw_k} \cdot \frac{dx_j}{dz_j} \cdot \frac{dz_i}{dx_j} \cdot \frac{dx_i}{dz_i} \cdot \frac{dL}{dx_i}
-\end{equation}
+We can do the same for the three-dimensional case which is a bit trickier. Unlike in the case of standard 2D convolutions as implemented in standard machine learning libraries, weights are not shared accross the input (or feature map). For an image with dimensions $H \times W$ we therefore also have the same number of weights. For an input image of size $3 \times 3$ and same padding with zeros, the weight matrix of a neural grid layer looks as follows:
 
-\begin{equation}
-\frac{dL}{dw_k} = x_k \cdot h'(z_j) \cdot w_{ij} \cdot h'(z_i) \cdot (x_i - y_i)
-\end{equation}
+$$
+\label{eq:Weights3d}
+z =
+\begin{pmatrix}
+w_{1} & w_{2} & w_{3} \\
+w_{4} & w_{5} & w_{6} \\
+w_{7} & w_{8} & w_{9} \\
+\end{pmatrix}
+*
+\begin{pmatrix}
+x_{1} & x_{2} & x_{3} \\
+x_{4} & x_{5} & x_{6} \\
+x_{7} & x_{8} & x_{9} \\
+\end{pmatrix}
+$$
 
-Here you can see that later in the implementation you can partly use earlier results.
+
+$$
+\label{eq:Weights3d2}
+z =
+\begin{pmatrix}
+0 & 0 & 0 & 0 & 0 \\
+0 & w_{1} & w_{2} & w_{3} & 0 \\
+0 & w_{4} & w_{5} & w_{6} & 0 \\
+0 & w_{7} & w_{8} & w_{9} & 0 \\
+0 & 0 & 0 & 0 & 0 \\
+\end{pmatrix}
+*
+\begin{pmatrix}
+0 & 0 & 0 & 0 & 0 \\
+0 & x_{1} & x_{2} & x_{3} & 0 \\
+0 & x_{4} & x_{5} & x_{6} & 0 \\
+0 & x_{7} & x_{8} & x_{9} & 0 \\
+0 & 0 & 0 & 0 & 0 \\
+\end{pmatrix}
+$$
+
+
+$$
+\Tiny
+\label{eq:unfoldedWeights3d}
+z = 
+\begin{pmatrix}
+0     &   0   & 0     & 0     & w_{1} & w_{2} & 0     & w_{4} & w_{5}\\
+0     &   0   & 0     & w_{1} & w_{2} & w_{3} & w_{4} & w_{5} & w_{6}\\
+0     &   0   & 0     & w_{2} & w_{3} & 0     & w_{5} & w_{6} & 0    \\
+0     & w_{1} & w_{2} & 0     & w_{4} & w_{5} & 0     & w_{7} & w_{8}\\
+w_{1} & w_{2} & w_{3} & w_{4} & w_{5} & w_{6} & w_{7} & w_{8} & w_{9}\\
+w_{2} & w_{3} & 0     & w_{5} & w_{6} & 0     & w_{8} & w_{9} & 0    \\
+0     & w_{4} & w_{5} & 0     & w_{7} & w_{8} & 0     & 0     & 0    \\
+w_{4} & w_{5} & w_{6} & w_{7} & w_{8} & w_{9} & 0     & 0     & 0    \\
+w_{5} & w_{6} & 0     & w_{8} & w_{9} & 0     & 0     & 0     & 0    
+\end{pmatrix}
+\odot
+\begin{pmatrix}
+0     &   0   & 0     & 0     & x_{1} & x_{2} & 0     & x_{4} & x_{5}\\
+0     &   0   & 0     & x_{1} & x_{2} & x_{3} & x_{4} & x_{5} & x_{6}\\
+0     &   0   & 0     & x_{2} & x_{3} & 0     & x_{5} & x_{6} & 0    \\
+0     & x_{1} & x_{2} & 0     & x_{4} & x_{5} & 0     & x_{7} & x_{8}\\
+x_{1} & x_{2} & x_{3} & x_{4} & x_{5} & x_{6} & x_{7} & x_{8} & x_{9}\\
+x_{2} & x_{3} & 0     & x_{5} & x_{6} & 0     & x_{8} & x_{9} & 0    \\
+0     & x_{4} & x_{5} & 0     & x_{7} & x_{8} & 0     & 0     & 0    \\
+x_{4} & x_{5} & x_{6} & x_{7} & x_{8} & x_{9} & 0     & 0     & 0    \\
+x_{5} & x_{6} & 0     & x_{8} & x_{9} & 0     & 0     & 0     & 0    
+\end{pmatrix}
+$$
+
+In case of three dimensional neural grids, images can be processed directly without converting them to an array.
+
+The neural grid is not designed to achive anything close to SOTA for some dataset, rather it is designed so that local grid neurons can interact with each other and to form network structures not previously specified.
+
 
 ## Implementation
 
-Naive implementation
+When I first implemented the idea for a neural grid, I took a very naive approach of iterating through the grid using two for-loops. This approach works, but required many hours to train a single epoch on the Fashion-MNIST dataset. Overall, the entire `forward()` method in the `NeuralGrid` class was a gigantic bottleneck - especially since the implementation was also only designed for a batch size of one. If at all, using the naive implementation below, the network could only crawl at best.
+
 
 ```python
 class NeuralGrid(nn.Module):
@@ -195,23 +315,94 @@ class NeuralGrid(nn.Module):
         return x_out
 ```
 
-Comparison of training time in seconds for a single epoch on the Fashion-MNIST dataset for different neural grid implementations.
+I then wondered how to reformulate the problem on hand to increase computational speed, an realized that the mapping between layers in the grid can be formulated using a special form of vector-matrix multiplication as shown in Equation \eqref{eq:sparseWeightMatrix}. This approach resulted in the following implementation consisting of two classes. The `NeuralGrid` and the `GridLayer` class.
 
-| Implementation | Time per epoch | Speedup |
-|:--------------:|:--------------:|:-------:|
-| Loop | $52427 \pm 607$ s (~14 h) | - |
-| Unfold (CPU, batch 1) | $1503 \pm 288$ s | 34 |
-| Unfold (CPU, batch 16) | $404 \pm 59$ s | 129 |
-| Unfold (CPU, batch 32) | $329 \pm 33$ s | 159 |
-| Unfold (CPU, batch 64) | $257 \pm 4$ s | 203 |
-| Unfold (GPU, batch 64) | $21 \pm 1$ s | 2469 |
-| Unfold (GPU, batch 256) | $5.41 \pm 0.17$ s | 9687 |
+In `GridLayer` we reformulate the inner for-loop in the implementation above by combining unfolding with an element-wise product that is followed by a sum along the resulting matrix's rows.
+
+
+```python
+class GridLayer(nn.Module):
+    """Class implements layer of a neural grid
+    """
+    def __init__(self, grid_height):
+        super().__init__()
+        self.kernel_size = 3  # do not change
+        self.stride = 1  # do not change
+        self.activation_function = torch.sin
+
+        # Trainable parameters
+        weight = xavier_uniform(size=(grid_height, ), fan_in=self.kernel_size, fan_out=1)
+        self.weight = nn.Parameter(F.pad(input=weight, pad=[1, 1], mode="constant", value=0.0),
+                                   requires_grad=True)
+        self.bias = nn.Parameter(torch.zeros(size=(grid_height,)), requires_grad=True)
+
+    def forward(self, x_in):
+        # Same padding to ensure that input size equals output size
+        x = F.pad(input=x_in, pad=[1, 1], mode="constant", value=0.0)
+
+        # Unfold activations and weights for grid operations
+        x = x.unfold(dimension=1, size=self.kernel_size, step=self.stride)
+        w = self.weight.unfold(dimension=0, size=self.kernel_size, step=self.stride)
+
+        # Compute activations
+        x = self.activation_function((w * x).sum(dim=-1) + self.bias)
+        return x
+
+
+```
+
+```python
+class NeuralGrid(nn.Module):
+    """ Implements a neural grid
+    """
+
+    def __init__(self, n_layers, n_units):
+        super().__init__()
+
+        #  self.grid_width = n_layers
+        self.grid_height = n_units
+
+        self.grid_layers = nn.ModuleList()
+        for _ in range(n_layers):
+            self.grid_layers.append(GridLayer(grid_height=self.grid_height))
+
+    def forward(self, x):
+        for grid_layer in self.grid_layers:
+            x = grid_layer(x)
+        return x
+```
+
+### Comparison of Implementations
+
+Network size: 784 x [128 x 128] x 10
+
+I wondered, how both implementations above would compare in terms of their computational performance. That's why I tested how long they take for an epoch on the Fashion-MNIST dataset. Note, that the naive implementation can only process one data sample per training iteration.
+
+Comparison of training time in seconds for a single epoch on the Fashion-MNIST dataset:
+
+| Implementation | Accelerator | Batch size | Time per epoch | Speedup |
+|:--------------:|:-----------:|:----------:|:--------------:|:-------:|
+| Naive          | CPU         | 1          | $52427 \pm 607$ s (~14 h) | 1 |
+| Unfold         | CPU         | 1          | $1503 \pm 288$ s          | 34 |
+| Unfold         | CPU         | 16         | $404 \pm 59$ s            | 129 |
+| Unfold         | CPU         | 32         | $329 \pm 33$ s            | 159 |
+| Unfold         | CPU         | 64         | $257 \pm 4$ s             | 203 |
+| Unfold         | GPU         | 64         | $21 \pm 1$ s              | 2469 |
+| Unfold         | GPU         | 256        | $5.41 \pm 0.17$ s         | 9687 |
+
+Compared to the vanilla implementation, I endend up with a speed-up of almost four orders.
 
 ## Experiments
 
-pass
+
+
+<!-- progress -->
 
 ## Results
+
+The following image shows the neural grid's activation pattern for the different classes of the Fashion-MNIST dataset. The input image is mapped in a first step to the grid's input dimension and is then processed from left to right using a simple local mapping between adjacent grid layers. The signal at the grid's output is mapped to the networks output using again a fully connected layer.
+
+It is interesting to see, how the signal uses different paths and is processed differently depending on the input's class
 
 ## Discussion
 
@@ -220,6 +411,16 @@ pass
 ## Outlook
 
 pass
+
+
+```bibtex
+@misc{blogpost,
+  title={NeuralGrid: A Grid Based Neural Network Architecture},
+  author={Fabi, Kai},
+  howpublished={\url{https://kaifabi.github.io//NeuralGrid}},
+  year={2021}
+}
+```
 
 ---
 

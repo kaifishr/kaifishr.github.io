@@ -276,6 +276,15 @@ In a next step, this method should be applied to a larger machine learning model
 
 ---
 
+```bibtex
+@misc{blogpost,
+  title={An Adaptive Learning Rate Method for Gradient Descent Algorithms},
+  author={Fabi, Kai},
+  howpublished={\url{https://kaifabi.github.io/2020/12/18/adaptive-learning-rate-method.html}},
+  year={2020}
+}
+```
+
 You find the code for this project [here][github_code].
 
 <!-- Links -->

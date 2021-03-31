@@ -165,6 +165,9 @@ Results for RGB relevance maps with random weights.
 
 The qualitative results seem to be plausible since relevance scores are particularly present in those regions of the image that we humans would also associate with the class. It is also interesting to see that few relevance scores were assigned to areas in the image that have little or nothing to do with the class itself. If relevance maps are generated with randomly initialized weights, the assignment of relevance scores is fairly random.
 
+As stated in a paper by [Samek et al.][lrp_paper_3] the entropy of a relevance score heatmap could also be used as a proxy for its quality or explainability. The idea is, that the entropy, defined as $H = -\sum_m R_m \log (R_m)$, is high if relevance is assigned more randomly across the image domain and low if relevance scores are more concentrated, indicating that the network is familiar with an object and has assigned most relevance scores to it. However, apart from the fact that this approach is not invariant with respect to the object size in the image, entropy is also lower if relevance scores are more concentrated, which does not necessarily mean that the network is familiar with the object or that the quality of a relevance map is high. This is especially true for images containing objects with strong local contrasts.
+
+
 ## Outlook
 
 This basic implementation of layer-wise relevance propagation is a good starting point for many possible extensions and applications. For example, new rules for the distribution of relevance scores can be added. Furthermore, one can try to transfer the implementation to more modern network architectures like ResNets or DenseNets.
@@ -183,5 +186,6 @@ You find the code for this project [here][github_code].
 
 [lrp_paper_1]: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0130140
 [lrp_paper_2]: https://www.sciencedirect.com/science/article/pii/S0031320316303582
+[lrp_paper_3]: https://arxiv.org/abs/1509.06321
 [RealTimeLRP]: https://github.com/KaiFabi/RealTimeRelevancePropagation
 [github_code]: https://github.com/KaiFabi/LayerwiseRelevancePropagation

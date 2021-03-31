@@ -26,3 +26,6 @@ plugins:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-sitemap
+
+kramdown:
+    auto_ids: true
