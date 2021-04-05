@@ -1,20 +1,19 @@
 ---
 layout: post
-title: "NeuralGrid: A Grid-based Neural Network Architecture"
+title: "NeuralGrid: A Grid-based Neural Network"
 date:   2021-03-01 21:30:21
 ---
 
-**TL;DR**: In this post I present a grid-based neural network architecture that allows neurons to form arbitrary network structures during training.
+**TL;DR**: Grid-based neural network architecture allow neurons to form arbitrary signal processing structures during training.
 
 ---
 
-TODO: 
-- Add colors to Figure 1 to show that neurons and input / output of grid are the same?
-- "Compared to 2d neural grids, 3d grids can be more shallow as the input features are closer together"
+1. TOC
+{:toc}
 
 ## Introduction 
 
-In this blog post I present a grid-based neural network architecture which I will call NeuralGrid. This network architecture is designed to allow atificial neurons to automatically interconnect into a network during the training process, thereby forming a previously undefined network structure. Compared to conventional network architectures, this type of network is therfore very plastic and can learn an optimal interconnection during training. The following figure shows the basic idea of a NeuralGrid.
+This post presents a grid-based neural network architecture which I will call NeuralGrid. This network architecture is designed to allow atificial neurons to automatically form arbitary interconnections during the training process, thereby forming a previously undefined network structure. Compared to conventional feedforward network architectures, this approach allows the grid component of the network to be more malleable. The following figure shows the basic idea of a NeuralGrid.
 
 <p align="center"> 
 <img src="/assets/images/post10/neural_grid.png" width="800"> 
@@ -22,13 +21,19 @@ In this blog post I present a grid-based neural network architecture which I wil
 </p>
 {: #fig:neuralgrid}
 
+The image above shows the basic idea behand a grid-based neural network architecture. In a first step, an input $x$ is mapped to the grid's input dimension where the representation is then processed from left to right using a simple local mapping between adjacent grid layers. The signal at the grid's output is mapped to the network's output using again a fully connected layer.
+
+The goal of this project is not to set a new SOTA for some dataset, but rather to investigate qualitatively the emerging patterns within the neural grid and how well the network performs.
+
 ## Method
 
-The network architecture consists of three main parts: The mapping from the input neurons $x_m$ to the grid's first layer, the mapping inside the grid, and finally the mapping from the last grid layer to the network's output.
+The architecture of a two-dimensional grid-based neural network consists of three parts: The mapping from the input neurons $x_m$ to the grid's first layer, the mapping inside the grid, and finally the mapping from the last grid layer to the network's output. In case of a three-dimensional grid, the mapping to the grid's input can be skipped.
 
-The network's way of processing information can be split into two different types. The first type of operation from the netowork's input to the grid, and from the grid to the output consists of standard vector-matrix multiplications.
+### Calculations outside the Grid
 
-The information processing of a single neuron outside the grid, i.e. before and after the grid, can be described as follows. 
+As has probably been noticed, the network's information processing can be split into two different types. The first type of operation, from the network's input to the grid's input, and from the grid's output to the network's output consists of a standard vector-matrix multiplication represented by fully connected layers. The information processing of a single neuron outside the grid, i.e. before and after the grid, can be described as an affine linear transformation $z$ that is follows by some nonlinear mapping represented by $h$.
+
+From network input to grid:
 
 \begin{equation} \label{eq:preactivation_in}
     z_l = \sum_{m} w_{lm} x_m + b_l
@@ -38,6 +43,8 @@ The information processing of a single neuron outside the grid, i.e. before and 
     x_m = h(z_l)
 \end{equation}
 
+From grid to network output:
+
 \begin{equation} \label{eq:preactivation_out}
     z_i = \sum_{j} w_{ij} x_j + b_i 
 \end{equation}
@@ -45,6 +52,8 @@ The information processing of a single neuron outside the grid, i.e. before and 
 \begin{equation} \label{eq:activation_out}
     x_i = h(z_i)
 \end{equation}
+
+### Calculations inside the Grid
 
 Things look a bit different for the mapping inside the grid. Here, the mapping can be described as follows:
 
@@ -56,15 +65,19 @@ Things look a bit different for the mapping inside the grid. Here, the mapping c
     x_p = h(z_p)
 \end{equation}
 
-In Equation \eqref{eq:zgrid}, $\Omega_p$ represents the receptive field over which the weighted sum is calculated. This is shown for a two dimensional grid and a kernel size of 3 in [Figure 1](#fig:neuralgrid) where the weighted sum over three grid cells is formed. For a three dimensional grid, the receptive field would be of size $k \times k$ ($q \times q$).
+In Equation \eqref{eq:zgrid}, $\Omega_p$ represents the receptive field over which the weighted sum is calculated. This is shown for the case of a two-dimensional grid in [Figure 1](#fig:neuralgrid) with a receptive field size (i.e. kernel size) of 3 and stride 1. As can be seen in [Figure 1](#fig:neuralgrid), the weighted sum is computed over three grid cells each. For a three-dimensional grid, the receptive field would be of size $k \times k$. It is also interesting to note, that due to the neural grid's architecture and the associated processing scheme, there are the same number of biases as there are weights.
 
-Within the grid, weights are shared by several neurons due to overlapping receptive fields. Due to the neural grid's processing scheme, there are the same number of weights and biases.
+Weights within the grid are shared by several neurons due to overlapping receptive fields. Thus, as [Figure 1](#fig:neuralgrid) shows, each weight within the grid contributes to three neurons in the consecutive layer. 
 
-As [Figure 1](#fig:neuralgrid) shows, each weight within the grid contributes to three neurons in the consecutive layer. This must also be taken into account in the subsequent calculation of the gradients insofar as the error signals for the respective weights must be accumulated.
+This must also be taken into account in the gradient computation insofar as the error signals for the respective weights must be accumulated. Fortunately, however, PyTorch's autograd engine takes care of this for us.
 
-The mapping within the grid can also be represented as a special kind of vector-matrix multiplication, which allows to use PyTorch's unfolding operations that allow a massive speedup. In the following a few example for the two and three dimensional case shall demonstrate how the problem can be formulated using unfolding operations.
+#### Formulating Grid Processes with Unfolding Operations
 
-### Unfolding in a Two Dimensional Neural Grid
+There is no out-of-box functionality within the PyTorch library that can perform the processes inside the grid as described above. One possibility would be to create the individual grid cells as a tensor and iterate over the grid with two for-loops. However, this would be incredibly slow (see comparison further below). Luckily, the mapping within the grid can also be represented as a special kind of vector-matrix multiplication, where the matrix is a sparse matrix with shared weights. This allows us to use PyTorch's blazingly fast unfolding operations which results in a massive speedup compared to a naive loop-based implementation. 
+
+The following two examples show how the mapping between two consecutive grid layers can be formulated using unfolding operation for the case of a two- and three-dimensional grid.
+
+#### Unfolding in a Two Dimensional Neural Grid
 
 For a neural grid layer consisting of activations $\boldsymbol{x}$ and weights $\boldsymbol{w}$ each consisting of five elements, a kernel size of $k=3$, and stride 1, Equation \eqref{eq:zgrid} can be written as
 
@@ -185,7 +198,7 @@ $$
 
 where $\odot$ represents the element-wise product of weights and activations. At first glance, the reformulation of Equation \eqref{eq:unfoldedFormulation} does not necessarily look more compact. However, this formulation scales with $\mathcal{O}(k \cdot n)$ and is therefore computationally more efficient compared to the first formulation in Equation \eqref{eq:unfoldedFormulation} that scales with $\mathcal{O}(n^2)$. In the implementation we can express Equation \eqref{eq:unfoldedFormulation} using PyTorch's unfolding operations for blazingly fast computations within the neural grid.
 
-### Unfolding in a Three Dimensional Neural Grid
+#### Unfolding in a Three Dimensional Neural Grid
 
 We can do the same for the three-dimensional case which is a bit trickier. Unlike in the case of standard 2D convolutions as implemented in standard machine learning libraries, weights are not shared accross the input (or feature map). For an image with dimensions $H \times W$ we therefore also have the same number of weights. For an input image of size $3 \times 3$ and same padding with zeros, the weight matrix of a neural grid layer looks as follows:
 
@@ -232,6 +245,7 @@ $$
 \label{eq:unfoldedWeights3d}
 z = 
 \begin{pmatrix}
+\begin{pmatrix}
 0     &   0   & 0     & 0     & w_{1} & w_{2} & 0     & w_{4} & w_{5}\\
 0     &   0   & 0     & w_{1} & w_{2} & w_{3} & w_{4} & w_{5} & w_{6}\\
 0     &   0   & 0     & w_{2} & w_{3} & 0     & w_{5} & w_{6} & 0    \\
@@ -253,6 +267,25 @@ x_{2} & x_{3} & 0     & x_{5} & x_{6} & 0     & x_{8} & x_{9} & 0    \\
 0     & x_{4} & x_{5} & 0     & x_{7} & x_{8} & 0     & 0     & 0    \\
 x_{4} & x_{5} & x_{6} & x_{7} & x_{8} & x_{9} & 0     & 0     & 0    \\
 x_{5} & x_{6} & 0     & x_{8} & x_{9} & 0     & 0     & 0     & 0    
+\end{pmatrix}
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+1\\
+1\\
+1\\
+1\\
+1\\
+1\\
+1\\
+1\\
+1
+\end{pmatrix}
++
+\begin{pmatrix}
+b_{1} & b_{2} & b_{3}\\
+b_{4} & b_{5} & b_{6}\\
+b_{7} & b_{8} & b_{9}
 \end{pmatrix}
 $$
 
@@ -394,35 +427,36 @@ Compared to the vanilla implementation, I endend up with a speed-up of almost fo
 
 ## Experiments
 
+The main focus of the experiments was to gather qualitative insights on how grid-based neural networks behave in a supervised classification task. For this reason, a grid-based model with a grid height of 16 cells and a depth of 32 cells was trained on the Fashion-MNIST dataset by optimising the multinomial logistic regression objective (softmax function) using the Adam optimization algorithm. The batch size during training was set to 64. The learning rate was initially set to $2e-4$, and then decreased by a factor of 10 every 100 epochs. In total, the learning was stopped after 400 epochs. The network's weights were initialized using the Xavier (TODO: cite!) initialization scheme. The biases were initialised with zero.
+
+In order to force the grid to learn better representations, no activation function was used for the mapping from the image space to the grid's input dimension.
 
 
-<!-- progress -->
+## Results and Discussion
 
-## Results
+This section shows some qualitative results from the grid's activation pattern. The following image shows the neural grid's activation pattern for the then different classes of the Fashion-MNIST dataset. Here, the activation patterns of 20 predictions were averaged for each class.
 
-The following image shows the neural grid's activation pattern for the different classes of the Fashion-MNIST dataset. The input image is mapped in a first step to the grid's input dimension and is then processed from left to right using a simple local mapping between adjacent grid layers. The signal at the grid's output is mapped to the networks output using again a fully connected layer.
+// Plot
 
-It is interesting to see, how the signal uses different paths and is processed differently depending on the input's class
+It is interesting to see, that depending on the class, the signal uses different paths through the neural grid and by that is processed differently. The standard deviation shows, that the grid's deeper layers are less volatile indicating the higher level features have been detected.
 
-## Discussion
+// Plot
 
-pass
+## Conclusion 
 
-## Outlook
+This blog post introduced a grid-based neural network architecture. Neural grids can be understood as a discretized signal processing network, where information are processed in a feedforward manner. The neural grid's placticity also allows to form arbitary network structures within the grid. The qualitative results have shown, that such pathways for the routing of signals ermerge in the grid during training.
 
-pass
 
+---
 
 ```bibtex
 @misc{blogpost,
-  title={NeuralGrid: A Grid Based Neural Network Architecture},
+  title={NeuralGrid: A Grid-based Neural Network},
   author={Fabi, Kai},
   howpublished={\url{https://kaifabi.github.io//NeuralGrid}},
   year={2021}
 }
 ```
-
----
 
 You find the code for this project [here][github_code].
 
