@@ -1,0 +1,137 @@
+\documentclass[preview]{standalone}
+\usepackage{bm}
+\usepackage{tikz}
+\usetikzlibrary{chains, positioning, decorations.pathreplacing, arrows.meta}
+
+\begin{document}
+\pagestyle{empty}
+
+% Network architecture
+\def\ilsize{2}
+\def\hlsize{6}
+\def\olsize{2}
+\def\neuronsize{4mm}
+
+\tikzset{>=latex}
+\tikzset{arr/.style={arrows={-Latex[angle=30:2.5mm]}}}
+
+\centering
+
+\begin{tikzpicture}
+\tikzstyle{neuron} = [circle, draw, fill=white!100, minimum size=\neuronsize, inner sep=0pt]
+\tikzstyle{annot} = [text width=6em, text centered, node distance=5mm]    
+
+\pgfmathsetmacro{\iyshift}{0.5*\ilsize-0.5*\hlsize}
+\pgfmathsetmacro{\oyshift}{0.5*\olsize-0.5*\hlsize}
+
+\begin{scope}[shift={(0,0)}]
+    % Nodes
+    \foreach \name / \y in {1,...,\ilsize} \node[neuron] (In-\name) at (0cm,-\y cm+\iyshift cm) {};
+
+    \foreach \name / \y in {1,...,\hlsize} {
+        \pgfmathsetmacro\k{\y*(100 / \hlsize)};
+        \node[neuron, fill=red!\k] (H0-\name) at (2cm,-\y cm) {};
+    }
+
+
+    % Connections 
+    \foreach \source in {1,...,\ilsize} {
+        \foreach \dest in {1,...,\hlsize} {
+            \path[->] (In-\source) edge (H0-\dest);
+        }
+    }
+
+    % Connections from hidden layer to grid
+    \foreach \x / \y in {1,...,\hlsize} 
+    {
+        \draw [->](H0-\x) -- (3, -\y);
+    }
+
+    \draw[-, decoration={brace, raise=0pt, amplitude=3mm, mirror}, decorate, xshift=0mm, yshift=0mm] 
+    (In-1.north -| In-1.west) -- node[left=3mm] {$\bm{x}$}   (In-\ilsize.south -| In-\ilsize.west);
+\end{scope}
+
+\begin{scope}[shift={(3,-6.5)}]
+
+    % Color grid's input tiles
+    \foreach \name / \y in {1,...,\hlsize} {
+        \pgfmathsetmacro\k{100 + (100 / \hlsize)*(1-\y)};
+        \node[rectangle, minimum size=1.0cm, fill=red!\k] (TIn-\name) at (0.5cm,-0.5cm + \y cm) {};
+    }
+
+    % Color grid's output tiles
+    \foreach \name / \y in {1,...,\hlsize} {
+        \pgfmathsetmacro\k{100 + (100 / \hlsize)*(1-\y)};
+        \node[rectangle, minimum size=1.0cm, fill=blue!\k] (TOut-\name) at (7.5cm,-0.5cm + \y cm) {};
+    }
+
+    % Grid
+    \draw[step=1.0cm, color=black] (0,0) grid (8,\hlsize);
+    
+    % Mapping
+    \draw [arr](0.5,5.5) -- (1.5,4.5);
+    \draw [arr](0.5,4.5) -- (1.5,4.5);
+    \draw [arr](0.5,3.5) -- (1.5,4.5);
+
+    \draw [arr](0.5,4.5) -- (1.5,3.5);
+    \draw [arr](0.5,3.5) -- (1.5,3.5);
+    \draw [arr](0.5,2.5) -- (1.5,3.5);
+
+    \draw [arr](0.5,3.5) -- (1.5,2.5);
+    \draw [arr](0.5,2.5) -- (1.5,2.5);
+    \draw [arr](0.5,1.5) -- (1.5,2.5);
+
+    \draw [arr](1.5,4.5) -- (2.5,3.5);
+    \draw [arr](1.5,3.5) -- (2.5,3.5);
+    \draw [arr](1.5,2.5) -- (2.5,3.5);
+
+    \coordinate (r1) at (0,0);
+    \coordinate (r2) at (8,0);
+    \draw[-, decoration={brace, raise=0pt, amplitude=4mm, mirror}, decorate, xshift=0mm, yshift=0mm] 
+    (r1) -- node[below=3mm] {Neural grid} (r2);
+
+    \node[above] at (7.5,6) {$x_j$};
+    \node[above] at (6.5,6) {$x_k$};
+
+\end{scope}
+
+\begin{scope}[shift={(12,0)}]
+    % Nodes
+    \foreach \name / \y in {1,...,\hlsize} {
+        \pgfmathsetmacro\k{\y*(100 / \hlsize)};
+        \node[neuron, fill=blue!\k] (H2-\name) at (0cm,-\y cm) {};
+    }
+    \foreach \name / \y in {1,...,\olsize} \node[neuron] (Out-\name) at (2cm,-\y cm+\oyshift cm) {};
+    \foreach \name / \y in {1,...,\olsize} \node[neuron] (Target-\name) at (3cm,-\y cm+\oyshift cm) {};
+
+    % Connections
+    \foreach \x / \y in {1,...,\hlsize} 
+    {
+        %\draw [->](-1, -\y) -- (0, -\y);
+        \draw [->](-1, -\y) -- (H2-\x);
+    }
+
+    \foreach \source in {1,...,\hlsize}
+        \foreach \dest in {1,...,\olsize}
+            \path[->] (H2-\source) edge (Out-\dest);
+    
+    \foreach \source in {1,...,\olsize}
+        \path[<->] (Out-\source) edge (Target-\source);
+
+    \draw[-, decoration={brace, raise=0pt, amplitude=2mm, mirror}, decorate, xshift=0mm, yshift=0mm] 
+    (Out-\olsize.south -| Out-\olsize.west) -- node[below=0.2cm] {\tiny $L=\sum_i (y_i - x_i)^2$}   (Target-\olsize.south -| Target-\olsize.east);
+\end{scope}
+
+\path (In-1) -- node[midway, sloped, above] {\footnotesize $w_{lm}$} (H0-1);
+%\path (H0-1) -- node[midway, sloped, below] {\footnotesize $w_{kl}$} (H1-1);
+%\path (H1-1) -- node[midway, sloped, below] {\footnotesize $w_{jk}$} (H2-1);
+\path (H2-1) -- node[midway, sloped, above] {\footnotesize $w_{ij}$} (Out-1);
+
+\node[annot,above of=In-1] {\footnotesize $x_m$};
+\node[annot,above of=H0-1] (hl) {\footnotesize $x_l = h(z_l)$};
+\node[annot,above of=H2-1] (hl) {\footnotesize $x_j = h(z_j)$};
+\node[annot,above = 3mm of Out-1] {\tiny $x_i = \sigma(z_i)$};
+\node[annot,below of=Target-1] {\footnotesize $y_i$};
+
+\end{tikzpicture}
+\end{document}
