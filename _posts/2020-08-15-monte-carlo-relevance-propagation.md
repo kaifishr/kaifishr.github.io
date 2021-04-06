@@ -18,3 +18,14 @@ You find the preprint [here][mcrp_paper].
 
 <!-- Links -->
 [mcrp_paper]: https://arxiv.org/abs/2008.01468
+
+---
+
+```bibtex
+@article{fabi2020feature,
+  title={On Feature Relevance Uncertainty: A Monte Carlo Dropout Sampling Approach},
+  author={Fabi, Kai and Schneider, Jonas},
+  journal={arXiv preprint arXiv:2008.01468},
+  year={2020}
+}
+```
