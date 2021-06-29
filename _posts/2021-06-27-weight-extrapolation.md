@@ -1,33 +1,19 @@
 ---
 layout: post
-title: "Accelerating Training with Taylor Weight Extrapolation"
+title: "Accelerated Training with Taylor Weight Extrapolation"
 ---
 
 **TL;DR**: Taylor series expansion in combination with finite difference approximations can be used to perform weight extrapolation between optimization steps by taking advantage of information stored in past gradients.
 
 ---
 
-## TODOs
-
-- Higher-order formulations might not work as well. Reasons might be that the approximations of higher-order derivatives are numerically unstable. There might be a high volatility of $w(t)$ especially at the beginning of training. A very small learning rate might be necessary.
-
-- Is it reasonable to assume that higher-order formulations can be used in later stages of the training where updates / gradients are not as wild as in the beginning?
-
-
-
-
-
 ## Introduction 
 
-Training deep neural networks is becoming increasingly more expensive due to the large size of modern network architectures and every increasing amount of available data.
+Training deep neural networks is becoming increasingly more expensive due to the large size of modern network architectures and every increasing amount of available data. Reducing the costs of training these models remains a challenge and methods to accelerate the training can have a significant effect on how expensive it is to train a model.
 
-Reducing the costs of training these models remains a challenge and methods to accelerate the training can have a significant effect on how expensive it is to train a model.
+In this post I want to show how information stored in past gradients can be used for an extrapolation step, allowing to predict a new set of parameters between two optimization steps. Leveraging these information stored in past gradients allows faster training of gradient based machine learning algorithms and thus also accelerates training of neural networks. 
 
-In this post I want to show how information stored in past gradients can be used for an extrapolation step, allowing to predict a new set of parameters between two optimization steps.
-
-Leveraging these information stored in past gradients allows to accelerate training of neural networks. In this post, an explicit formula for extrapolation steps is derived for neural networks trained with stochastic gradient descent (SGD).
-
-The following figure shows the basic idea of extrapolation steps.
+In this post, an explicit formula for extrapolation steps is derived for neural networks trained with stochastic gradient descent (SGD). The following figure shows the basic idea of extrapolating model parameters.
 
 <p align="center"> 
 <img src="/assets/images/post11/weight_extrapolation.png" width="500"> 
@@ -172,20 +158,26 @@ For the experiments I trained two ResNet-18 convolutional neural network on the 
 
 ## Results and Discussion
 
-Weight extrapolation as described in this post might work better for lager batch sizes and/or smaller learning rates. 
+The results show a clear benefit coming from weight extrapolation compared to standard SGD. Not only is the test accuracy higher compared to the baseline model, but is also achieved after a shorter amount of time.
 
-Increasing the batch size allows for better gradient approximations potentially leading to a smoother trajectory through the parameter space.
-as these allow better gradient approximations
-- Discussion: Should work best for small learning rates and large batches sizes as these allow smooth gradients
+o TODO: add figure
 
-## Conclusion 
+Weight extrapolation as described in this post might work better for lager batch sizes as these result in better gradient approximations potentially leading to a smoother trajectories through parameter space. Deep learning systems that are able to process very large batch sizes could thus particularly benefit from this method.
+
+The Taylor series expansion allows for higher-order formulations of weight extrapolation that might or might not work as well. Reasons for that might be that the computation of higher-order terms can become numerically unstable. There might be a high volatility of $w(t)$ especially at the beginning of training making it difficult to extrapolate the weights. However, it is reasonable to assume that higher-order formulations can be used in later stages of the training where the gradient updates are potentially less volatile as in the beginning.
+
+Smaller learning rates might also help the method of weight extrapolation itself, but at the same time could greatly slow down the training.
+
+## Conclusion
+
+Accelerating the training of gradient based machine learning algorithms is an important factor in training large neural network architectures.
 
 
 ---
 
 ```bibtex
 @misc{blogpost,
-  title={Neural Weight Extrapolation},
+  title={Taylor Weight Extrapolation},
   author={Fabi, Kai},
   howpublished={\url{https://kaifabi.github.io//NeuralWeightExtrapolation}},
   year={2021}
