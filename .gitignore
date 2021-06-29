@@ -30,3 +30,11 @@ Thumbs.db
 _layouts/
 _sass/
 script/
+
+# kf
+# Latex
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf

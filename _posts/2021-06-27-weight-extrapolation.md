@@ -15,6 +15,8 @@ title: "Accelerating Training with Taylor Weight Extrapolation"
 
 
 
+
+
 ## Introduction 
 
 Training deep neural networks is becoming increasingly more expensive due to the large size of modern network architectures and every increasing amount of available data.
@@ -129,10 +131,46 @@ By looking at the first two terms of Equation \eqref{eq:secondOrder3}, we see th
 
 ## Implementation
 
+In the implementation, care must be taken that for a weight extrapolation of $N$th degree, $N$ optimization steps are waited for beforehand in order to calculate the first extrapolation step correctly. After that point there are two options when to perform extrapolation steps:
+
+- After each optimization step. In this case the gradients used for the extrapolation are no longer connected.
+- After every $N$th optimization steps. Performing an extrapolation step only every $N$ optimization steps has the advantage that the gradients used for weight extrapolation are not interrupted by the calculation of the extrapolation step (see [Figure 1](#fig:weightExtrapolation) above).
+
+In the implementation below I used the second option to account for the interruptions introduced by the extrapolation steps.
+
+```python
+class ParameterExtrapolator:
+    def __init__(self, model, cfg):
+        self.model = model
+
+        # Pointer to buffered gradients
+        self.p = None
+
+        # Steps sizes
+        self.eta = cfg["training"]["learning_rate"]
+        self.dt = cfg["experimental"]["dt"]
+
+    def _buffer_parameters(self):
+        self.p = [p.grad.clone() for p in self.model.parameters()]  
+
+    def step(self):
+        if self.p is None:
+            self.p = [p.grad.clone() for p in self.model.parameters()]
+
+        self._buffer_parameters()
+ 
+        for params, p in zip(self.model.parameters(), self.p):
+            params.data = params.data \
+                          - self.dt * params.grad \
+                          - 0.5 * self.dt**2 * (1.0 / self.eta) * (params.grad + p.data)
+```
+
 ## Experiments
 
-## Results and Discussion
+For the experiments I trained two ResNet-18 convolutional neural network on the Imagewoof dataset using plain old stochastic gradient descent (SGD) without momentum. The baseline network's learning rate has been optimized using a simple grid search approach resulting in a learning rate of $0.02$ using a batch size of $64$. To compensate for the additional extrapolation steps, the baseline network has been trained for twice the number of epochs. The network equipped with weight extrapolation used extactly the same hyperparameters as the baseline model plus a weight extrapolation step size $dt = 1\mathrm{e}{-10}$.
 
+
+## Results and Discussion
 
 Weight extrapolation as described in this post might work better for lager batch sizes and/or smaller learning rates. 
 
