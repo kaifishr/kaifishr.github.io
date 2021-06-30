@@ -18,7 +18,7 @@ In this post, an explicit formula for extrapolation steps is derived for neural 
 <p align="center"> 
 <img src="/assets/images/post11/weight_extrapolation.png" width="500"> 
 <br>
-<b>Figure 1:</b> Schematic drawing of how past gradient information can be used to predict a new set of model parameters at $n+3$.
+<b>Figure 1:</b> Schematic drawing of how past gradient information can be used to predict a new set of model parameters at $n+1$.
 </p>
 {: #fig:weightExtrapolation}
 
@@ -160,7 +160,7 @@ For the experiments I trained two ResNet-18 convolutional neural network on the 
 
 The results show a clear benefit coming from weight extrapolation compared to standard SGD. Not only is the test accuracy higher compared to the baseline model, but is also achieved after a shorter amount of time.
 
-o TODO: add figure
+- **TODO: add two figure that compares accuracy as function of optimization step and time**
 
 Weight extrapolation as described in this post might work better for lager batch sizes as these result in better gradient approximations potentially leading to a smoother trajectories through parameter space. Deep learning systems that are able to process very large batch sizes could thus particularly benefit from this method.
 
@@ -170,8 +170,9 @@ Smaller learning rates might also help the method of weight extrapolation itself
 
 ## Conclusion
 
-Accelerating the training of gradient based machine learning algorithms is an important factor in training large neural network architectures.
+Training large neural networks can be prohibitively costly in terms of compute power. Therefore, accelerating the training of deep learning models is an important factor. In this post I tried to address this issue using a gradient-based weight extrapolation approach to speed up the learning process of machine learning models trained with gradient-based algorithms such as SGD.
 
+Despite the simplicity of the method, adding extrapolation steps to the optimization process gives good results. The model equipped with weight extrapolation not only achieves the same or even better results in fewer steps, but also requires less time.
 
 ---
 
@@ -187,4 +188,4 @@ Accelerating the training of gradient based machine learning algorithms is an im
 You find the code for this project [here][github_code].
 
 <!-- Links -->
-[github_code]: https://github.com/KaiFabi/NeuralGrid
+[github_code]: https://github.com/KaiFabi/WeightExtrapolation
