@@ -2,6 +2,7 @@
 layout: post
 title: "Accelerated Training with Taylor Weight Extrapolation"
 ---
+<!--title: "Gradient-based Weight Extrapolation"-->
 
 **TL;DR**: Taylor series expansion in combination with finite difference approximations can be used to perform weight extrapolation between optimization steps by taking advantage of information stored in past gradients.
 
@@ -21,6 +22,7 @@ In this post, an explicit formula for extrapolation steps is derived for neural 
 <b>Figure 1:</b> Schematic drawing of how past gradient information can be used to predict a new set of model parameters at $n+1$.
 </p>
 {: #fig:weightExtrapolation}
+- **TODO: Add this image to repository README.md**
 
 [Figure 1](#fig:weightExtrapolation) shows the basic idea how past gradient information can be used to perform an intermediate weight extrapolation step. For a second order extrapolation step the current and previous gradients are necessary to compute a parameter set based on extrapolation. The graph also shows that this is equivalent to using the information stored in the last three sets of parameters.
 
@@ -44,7 +46,7 @@ $$
 Now we want to know how $w(t)$ behaves behind point $t_0$. This is why we evaluate function $w(t)$ at $t=t_0+dt$. The step size is thus just $dt = t-t_0$. Inserting these expressions and neglecting higher order terms leads to
 
 $$
-w(t_0+dt) = w(t_0) + w'(t_0)dt + \frac{1}{2}w''(t_0)dt^2
+w(t_0+dt) \approx w(t_0) + w'(t_0)dt + \frac{1}{2}w''(t_0)dt^2
 $$
 
 To make thinks look a little bit friendlier, I'll use the following notation $w(t_0) = w_n$ and $w(t_0+dt) = w_{n+1}$, where the index $n$ represents the current optimization step. This leads us to the following expression
@@ -54,52 +56,54 @@ $$
 w_{n+1} = w_{n} + w'_{n}dt + \frac{1}{2}w''_{n}dt^2
 $$
 
-To be able to evaluate the derivations in the expression above, we use the finite difference method that is often used as an approximation of derivatives. In particular, we make use of the backward difference method since we only have past parameters available.  The backward difference of a function $w(t)$ at point $t$ is defined by the limit
+To be able to evaluate the derivations in the expression above, we use the finite difference method that is often used as an approximation of derivatives. In particular, we make use of the backward difference method since we only have past parameters available. The backward difference of a function $w(t)$ at point $t$ is defined by the limit
 
 $$
 \label{eq:backwardDifference}
-w'(t) = \lim_{\eta \rightarrow 0} \frac{w(t)-w(t-\eta)}{\eta}
+w'(t) = \lim_{h \rightarrow 0} \frac{w(t)-w(t-h)}{h}
 $$
 
 For our purpose we use the following approximation to describe the derivative at step $n$. 
 
 $$
 \label{eq:firstDerivative}
-w'_{n}=\frac{w_{n}-w_{n-1}}{\eta}
+w'_{n} \approx \frac{w_{n}-w_{n-1}}{h}
 $$
 
-From the expression above, we can easily derive an expression for the second derivative
+From the expression above, we can directly derive an expression for the second derivative
 
 $$
-w''_{n}=\frac{w'_{n}-w'_{n-1}}{\eta}
-=\frac{\frac{w_{n}-w_{n-1}}{\eta}-\frac{w_{n-1}-w_{n-2}}{\eta}}{\eta}
-=\frac{(w_{n}-w_{n-1})-(w_{n-1}-w_{n-2})}{\eta^2}
+\label{eq:secondDerivative}
+w''_{n}=\frac{w'_{n}-w'_{n-1}}{h}
+=\frac{\frac{w_{n}-w_{n-1}}{h}-\frac{w_{n-1}-w_{n-2}}{h}}{h}
+=\frac{(w_{n}-w_{n-1})-(w_{n-1}-w_{n-2})}{h^2}
 $$
 
-OR
-
+<!--
+**OR**
 $$
 \begin{equation}
 \begin{gathered} \label{eq:secondDerivative}
-w''_{n}&=&\frac{w'_{n}-w'_{n-1}}{\eta}\\
+w''_{n}
+&=&\frac{w'_{n}-w'_{n-1}}{\eta}\\
 &=&\frac{\frac{w_{n}-w_{n-1}}{\eta}-\frac{w_{n-1}-w_{n-2}}{\eta}}{\eta}\\
 &=&\frac{(w_{n}-w_{n-1})-(w_{n-1}-w_{n-2})}{\eta^2}
 \end{gathered}
 \end{equation}
 $$
+-->
 
 Inserting Equation \eqref{eq:firstDerivative} and \eqref{eq:secondDerivative} into Equation\eqref{eq:secondOrder} yields
 
 $$
 \begin{equation}
 \begin{gathered} \label{eq:secondOrder2}
-w_{n+1} &=& w_{n} + w'_{n}dt + \frac{1}{2}w''_{n}dt^2\\
-&=& w_{n} + \frac{dt}{\eta}(w_{n}-w_{n-1}) + \frac{dt^2}{2\eta^2}((w_{n}-w_{n-1})-(w_{n-1}-w_{n-2}))
+w_{n+1} = w_{n} + \frac{dt}{\eta}(w_{n}-w_{n-1}) + \frac{dt^2}{2\eta^2}((w_{n}-w_{n-1})-(w_{n-1}-w_{n-2}))
 \end{gathered}
 \end{equation}
 $$
 
-At this point, we can use the standard update rule of gradient descent 
+At this point, we can use the standard gradient descent update rule that is given by
 
 $$
 w_{n} = w_{n-1} - \eta \frac{\partial L}{\partial w_{n-1}}$$
@@ -108,11 +112,19 @@ to reformulate Equation \eqref{eq:secondOrder2} into
 
 $$
 \label{eq:secondOrder3}
-w_{n+1} = w_n - dt \frac{\partial L}{\partial w_{n-1}} - \frac{dt^2}{2\eta}\left( \frac{\partial L}{\partial w_{n-1}} + \frac{\partial L}{\partial w_{n-2}}\right)
+w_{n+1} = w_{n} - dt\frac{\eta}{h} \frac{\partial L}{\partial w_{n-1}} - dt^2\frac{\eta}{2h^2}\left( \frac{\partial L}{\partial w_{n-1}} - \frac{\partial L}{\partial w_{n-2}}\right)
 $$
 
+For a small but finite $h \equiv \eta$ we have $w'(t) \approx \frac{w_{t}-w_{t-1}}{\eta}$.
 
-By looking at the first two terms of Equation \eqref{eq:secondOrder3}, we see that we recovered the standard gradient descent update rule. Interestingly, this formula suggests to perform a standard gradient descent step plus a gradient descent step influenced by the last gradients.
+Now, we can use $w'(t) \approx \frac{w_{t}-w_{t-1}}{\eta}$ for small but finite $h \equiv \eta$. This solution is valid at for small enough learning rates $\eta$. However, small values for $\eta$ can take your model ages to converge. On the other hand, relatively large learning rates $\eta$ lead to a poor approximation of $w'(t)$. Using the approximation we get
+
+$$
+\label{eq:secondOrder4}
+w_{n+1} = w_{n} - dt\frac{\partial L}{\partial w_{n-1}} - \frac{dt^2}{2h}\left( \frac{\partial L}{\partial w_{n-1}} - \frac{\partial L}{\partial w_{n-2}}\right)
+$$
+
+By looking at the first two terms of Equation \eqref{eq:secondOrder4}, we see that we recovered the standard gradient descent update rule. Interestingly, this formula suggests to perform a standard gradient descent step with step size $dt$ plus an additional correction step determined by the past two gradients.
 
 
 ## Implementation
@@ -155,7 +167,6 @@ class ParameterExtrapolator:
 
 For the experiments I trained two ResNet-18 convolutional neural network on the Imagewoof dataset using plain old stochastic gradient descent (SGD) without momentum. The baseline network's learning rate has been optimized using a simple grid search approach resulting in a learning rate of $0.02$ using a batch size of $64$. To compensate for the additional extrapolation steps, the baseline network has been trained for twice the number of epochs. The network equipped with weight extrapolation used extactly the same hyperparameters as the baseline model plus a weight extrapolation step size $dt = 1\mathrm{e}{-10}$.
 
-
 ## Results and Discussion
 
 The results show a clear benefit coming from weight extrapolation compared to standard SGD. Not only is the test accuracy higher compared to the baseline model, but is also achieved after a shorter amount of time.
@@ -168,6 +179,8 @@ The Taylor series expansion allows for higher-order formulations of weight extra
 
 Smaller learning rates might also help the method of weight extrapolation itself, but at the same time could greatly slow down the training.
 
+- Method allows to train same model faster!
+
 ## Conclusion
 
 Training large neural networks can be prohibitively costly in terms of compute power. Therefore, accelerating the training of deep learning models is an important factor. In this post I tried to address this issue using a gradient-based weight extrapolation approach to speed up the learning process of machine learning models trained with gradient-based algorithms such as SGD.
@@ -176,11 +189,12 @@ Despite the simplicity of the method, adding extrapolation steps to the optimiza
 
 ---
 
+- **TODO: Add to README.md of repository**
 ```bibtex
 @misc{blogpost,
   title={Taylor Weight Extrapolation},
   author={Fabi, Kai},
-  howpublished={\url{https://kaifabi.github.io//NeuralWeightExtrapolation}},
+  howpublished={\url{https://kaifabi.github.io//WeightExtrapolation}},
   year={2021}
 }
 ```

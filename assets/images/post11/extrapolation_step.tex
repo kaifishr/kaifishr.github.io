@@ -10,7 +10,7 @@
 \begin{tikzpicture}
 
 % horizontal axis
-\draw[->] (0,0) -- (7,0) node[anchor=north] {$t$};
+\draw[->] (0,0) -- (8,0) node[anchor=north] {$t$};
 
 % vertical axis
 \draw[->] (0,0) -- (0,5) node[anchor=east] {$w(t)$};
@@ -40,19 +40,22 @@
 \draw[dashed] (p3) -- (p4);
 
 % x-braces
-\draw [decorate,decoration={brace,amplitude=6pt,mirror},xshift=0pt,yshift=-0.5cm] (0.00,0) -- (1.98,0) node [anchor=south,midway,xshift=0cm,yshift=-0.7cm] {$\eta$};
-\draw [decorate,decoration={brace,amplitude=6pt,mirror},xshift=0pt,yshift=-0.5cm] (2.02,0) -- (3.98,0) node [anchor=south,midway,xshift=0cm,yshift=-0.7cm] {$\eta$};
-\draw [decorate,decoration={brace,amplitude=6pt,mirror},xshift=0pt,yshift=-0.5cm] (4.02,0) -- (5.50,0) node [anchor=south,midway,xshift=0cm,yshift=-0.7cm] {$dt$};
+% \draw [decorate,decoration={brace,amplitude=6pt,mirror},xshift=0pt,yshift=-0.5cm] (0.00,0) -- (1.98,0) node [anchor=south,midway,xshift=0cm,yshift=-0.7cm] {$\eta$};
+% \draw [decorate,decoration={brace,amplitude=6pt,mirror},xshift=0pt,yshift=-0.5cm] (2.02,0) -- (3.98,0) node [anchor=south,midway,xshift=0cm,yshift=-0.7cm] {$\eta$};
+% \draw [decorate,decoration={brace,amplitude=6pt,mirror},xshift=0pt,yshift=-0.5cm] (4.02,0) -- (5.50,0) node [anchor=south,midway,xshift=0cm,yshift=-0.7cm] {$dt$};
 
 % y-braces
-\draw [decorate,decoration={brace,amplitude=6pt,mirror},xshift=0.1cm,yshift=0cm] (2.0,2.4) -- (2.0,4.0) node [anchor=west,midway,xshift=0.2cm,yshift=0cm] {$\eta\frac{\partial L}{\partial w_{n-2}}$};
-\draw [decorate,decoration={brace,amplitude=6pt,mirror},xshift=0.1cm,yshift=0cm] (4.0,1.5) -- (4.0,2.4) node [anchor=west,midway,xshift=0.2cm,yshift=0cm] {$\eta\frac{\partial L}{\partial w_{n-1}}$};
+\draw [decorate,decoration={brace,amplitude=6pt,mirror},xshift=0.1cm,yshift=0cm] (2.0,2.4) -- (2.0,4.0) node [anchor=west,midway,xshift=0.2cm,yshift=0cm] {$-\eta\frac{\partial L}{\partial w_{n-2}}$};
+\draw [decorate,decoration={brace,amplitude=6pt,mirror},xshift=0.1cm,yshift=0cm] (4.0,1.5) -- (4.0,2.4) node [anchor=west,midway,xshift=0.2cm,yshift=0cm] {$-\eta\frac{\partial L}{\partial w_{n-1}}$};
+\draw [decorate,decoration={brace,amplitude=6pt,mirror},xshift=0.1cm,yshift=0cm] (5.5,1.0) -- (5.5,1.5) node [anchor=west,midway,xshift=0.2cm,yshift=0cm] {$-(dt \frac{\partial L}{\partial w_{n-1}} + \frac{dt^2}{2\eta}\left( \frac{\partial L}{\partial w_{n-1}} - \frac{\partial L}{\partial w_{n-2}}\right))$};
 
 % dashed lines
 \draw[dotted] (0.0,4.0) -- (2.0,4.0);
-\draw[dotted] (0.0,2.4) -- (4.0,2.4);
+\draw[dotted] (2.0,2.4) -- (4.0,2.4);
 \draw[dotted] (2.0,4.0) -- (2.0,2.4);
 \draw[dotted] (4.0,2.4) -- (4.0,1.5);
+\draw[dotted] (4.0,1.5) -- (5.5,1.5);
+\draw[dotted] (5.5,1.5) -- (5.5,1.0);
 
 
 \end{tikzpicture}
