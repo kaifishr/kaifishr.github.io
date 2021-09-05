@@ -17,7 +17,7 @@ twitter_username: _kaifabi
 minima:
     date_format: "%b %-d, %Y"
     social_links:
-        twitter: _kaifabi
+        twitter: eigenkai 
         github: kaifabi
 
 theme: minima
