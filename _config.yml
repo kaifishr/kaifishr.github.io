@@ -12,7 +12,7 @@ show_excerpts: false
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://kaifabi.github.io" # the base hostname & protocol for your site
 github_username: kaifabi
-twitter_username: _kaifabi
+twitter_username: eigenkai
 
 minima:
     date_format: "%b %-d, %Y"
