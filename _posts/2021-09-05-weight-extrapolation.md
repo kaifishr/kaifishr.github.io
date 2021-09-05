@@ -566,7 +566,6 @@ In this post I described a method that allows to leverage the information stored
 
 ---
 
-- **TODO: Add to README.md of repository**
 ```bibtex
 @misc{blogpost,
   title={Gradient-based Weight Extrapolation},
