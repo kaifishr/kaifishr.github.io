@@ -392,7 +392,7 @@ The main focus of the experiments was to gather qualitative insights on how grid
 
 ## Results and Discussion
 
-The grid-based neural network achieved an classification accuracy of $86.9%$ on the Fashion-MNIST dataset. The following two figures show some qualitative results of the neural grid's activation pattern at the start and at the end of training for the ten classes of the Fashion-MNIST dataset. For each activation pattern, the activations of the first $64$ samples of each class were averaged.
+The grid-based neural network achieved an classification accuracy of $86.9 \%$ on the Fashion-MNIST dataset. The following two figures show some qualitative results of the neural grid's activation pattern at the start and at the end of training for the ten classes of the Fashion-MNIST dataset. For each activation pattern, the activations of the first $64$ samples of each class were averaged.
 
 <p align="center"> 
 <img src="/assets/images/post10/activation_grid_start.png" width="800"> 
