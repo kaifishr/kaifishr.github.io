@@ -484,7 +484,6 @@ class Extrapolator(Optimizer):
                     param_state['grad_1'] = torch.clone(d_p).detach()
                     param_state['grad_2'] = torch.clone(d_p).detach()
                 else:
-                    #if (state["step"]+1) % 3 == 0:
                     if state["step"] > 2:
                         grad_1 = param_state['grad_1']
                         grad_2 = param_state['grad_2']
