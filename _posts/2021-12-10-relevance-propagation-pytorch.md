@@ -1,16 +1,18 @@
 ---
 layout: post
-title: "Layer-wise Relevance Propagation with PyTorch"
+title: "Relevance Propagation with PyTorch"
 ---
 
-**TL;DR**: A basic, unsupervised, but reasonably fast implementation of Layer-wise Relevance Propagation (LRP) in PyTorch.
+**TL;DR**: A basic, unsupervised, yet reasonably fast implementation of Layer-wise Relevance Propagation (LRP) in PyTorch.
 
 ---
 ## Introduction
 
+Layer-wise relevance propagation is a simple but powerful method that helps us to better understand the relevance of input features on the network's classification decision.
+
 Not long ago I posted an implementation for [Layer-wise Relevance Propagation with Tensorflow][lrp_tensorflow] on my blog where I also went into some of the theoretical underpinnings of LRP.
 
-This post presents a very basic and unsupervised implementation of Layer-wise Relevance Propagation ([Bach et al.][bach2015], [Montavon et al.][montavon2019]) in PyTorch for VGG networks from PyTorch's Model Zoo. 
+This post presents a very basic and unsupervised implementation of Layer-wise Relevance Propagation ([Bach et al.][bach2015], [Montavon et al.][montavon2019]) in PyTorch for VGG networks from PyTorch's Model Zoo.
 
 I used [this][montavon_gitlab] tutorial as a starting point for my implementation. I tried to make the code easy to understand but also easy to extend as this implementation is primarily intended to get you started with LRP.
 
@@ -18,71 +20,49 @@ I also added a novel relevance propagation filter to this implementation resulti
 
 
 <p align="center"> 
-<img src="/assets/images/post12/image_1.png" width="700"> 
+<img src="/assets/images/post12/image_3.png" width="700"> 
 <br>
-<b>Figure 1:</b> bla </p>
-{: #fig:weightExtrapolation}
+<b>Figure 1:</b> An owl. </p>
+{: #fig:lrpBird}
 
-[Figure 1](#fig:weightExtrapolation) 
+[Figure 1](#fig:lrpOwl) 
+
 
 ## Method
 
-$$
-w(t) = \sum_{k=0}^{\infty} \frac{w^{(k)}(t)}{k!}\bigg\rvert_{t=t_{0}}(t-t_{0})^k
-$$
+Starting at the ouput layer, layer-wise relevance propagation assigns relevance scores to each of the network's activations until the input is reached according to some relevance propagation rule.
 
-[differences quotient][wiki_difference_quotient]
+How the relevance of each neuron is computed is described by the following formula:
 
-
-$$
-\begin{equation}
-\begin{aligned}
-\label{eq:bdfFirstOrderDerivative}
-w_{n}'
-&= \frac{11}{6h}w_{n} - \frac{3}{h}w_{n-1} + \frac{3}{2h}w_{n-2} - \frac{1}{3h}w_{n-3}\\
-&= \frac{1}{h}(\frac{11}{6}w_{n} - 3w_{n-1} + \frac{3}{2}w_{n-2} - \frac{1}{3}w_{n-3})
-\end{aligned}
+\begin{equation} \label{eq:zplus}
+    R_i^{(l)} = \sum_j \frac{x_i w_{ij}^+}{\sum_{i'} x_{i'} w_{i'j}^+} R_j^{(l+1)}
 \end{equation}
-$$
 
+Equation \eqref{eq:zplus} describes relevance distribution in fully connected layers. Here, $R_i^{(l)}$ and $R_j^{(l+1)}$ represent the relevance scores of neuron $i$ and $j$ in layers $(l)$ and $(l+1)$, respectively. $x_i$ represents the $i$th neuron's activation. $w_{ij}^+$ stands for the positive weights connecting the neurons $i$ and $j$ of layers $(l)$ and $(l+1)$.
 
-```python
-class Bla(Optimizer):
-    r"""Light extrapolator algorithm.
-        
-    """
-```
-
-| Function | Rosenbrock | Beale | Goldstein-Price |
-|:--------:|:----------:|:-----:|:---------------:|
-| Learning rate | 1e-1 | 1e-2 | 1e-3 |
-| $\Delta t$ | 1e-4 | 1e-4 | 1e-5 |
-
+This formula is also know as the $z^+$-rule. Basically this formula describes that the contribution of a single neuron to the total activation mass of a layer is decisive for its relevance.
 
 <p align="center"> 
-<img src="/assets/images/post12/image_0.png" width="700">
-<img src="/assets/images/post12/image_1.png" width="700">
-<img src="/assets/images/post12/image_2.png" width="700">
-<img src="/assets/images/post12/image_3.png" width="700">
+<img src="/assets/images/post12/image_0.png" width="300">
+<img src="/assets/images/post12/image_1.png" width="300">
+<img src="/assets/images/post12/image_2.png" width="300">
+<img src="/assets/images/post12/image_3.png" width="300">
 </p>
 
 
-### To run
+{:refdef: style="text-align: center;"}
+![](/assets/images/post8/lrp_network.png)
+{: refdef}
 
-Running LRP for a VGG-like network is fairly straightforward
 
-```python
-import torch
-import torchvision
-from src.lrp import LRPModel
+## Implementation
 
-x = torch.rand(size=(1, 3, 224, 224))
-model = torchvision.models.vgg16(pretrained=True)
-lrp_model = LRPModel(model)
-r = lrp_model.forward(x)
-```
+The presentation implementation of LRP is completely unsupervised. This means, that we do not use the input's ground truth label as the starting point for the relevance propagation. 
 
-### Relevance Filter
+At least in my tests, I found that starting relevance propagation from the true label (setting the class' output activation and therefore the relevance to 1) had virtually no effect on the resulting heatmap.
+
+
+## Relevance Filter
 
 I have found that a very effective way of directing relevance scores to important features in input space is by using a filter that allows only the highest k % of relevance scores to pass to the next layer. Such a filter method results in much crisper heatmaps supporting the idea of suppressing very small and therefore noisy relevance scores. However, sorting the relevance scores can make this filter very expensive. Especially for convolutional layers.
 
