@@ -12,10 +12,12 @@ Layer-wise relevance propagation is a simple but powerful method that helps us t
 
 Not long ago I posted an implementation for [Layer-wise Relevance Propagation with Tensorflow][lrp_tensorflow] on my blog where I also went into some of the theoretical underpinnings of LRP.
 
-This post presents a very basic and unsupervised implementation of Layer-wise Relevance Propagation ([Bach et al.][bach2015], [Montavon et al.][montavon2019]) in PyTorch for VGG networks from PyTorch's Model Zoo.
+This post presents a very basic and unsupervised implementation of Layer-wise Relevance Propagation ([Bach et al.][bach2015], [Montavon et al.][montavon2019]) in PyTorch for VGG networks from PyTorch's Model Zoo. Implementation is applicable to networks with ReLU activation functions.
 
 I used [this][montavon_gitlab] tutorial as a starting point for my implementation. I tried to make the code easy to understand but also easy to extend as this implementation is primarily intended to get you started with LRP.
 
+Tutorial treats many layers differently and uses a bunch of hyperparameters. I'm not a friend of hyperparamters. Therefore I implemented a version that comes without hyperparameters and that treats each layer equally.
+ 
 I also added a novel relevance propagation filter to this implementation resulting in much crisper heat maps. If you want to use it, please don't forget to cite this implementation.
 
 
@@ -30,18 +32,64 @@ I also added a novel relevance propagation filter to this implementation resulti
 
 ## Method
 
-Starting at the ouput layer, layer-wise relevance propagation assigns relevance scores to each of the network's activations until the input is reached according to some relevance propagation rule.
+Starting at the ouput layer, layer-wise relevance propagation assigns relevance scores to each of the network's activations according to some relevance propagation rule until the input is reached.
 
-How the relevance of each neuron is computed is described by the following formula:
+The relevance of each neuron is computed according the following formula:
 
 \begin{equation} \label{eq:zplus}
-    R_i^{(l)} = \sum_j \frac{x_i w_{ij}^+}{\sum_{i'} x_{i'} w_{i'j}^+} R_j^{(l+1)}
+    R_i^{(l)} = \sum_j \frac{x_i w_{ij}^+}{\sum_{i'} x_{i'} w_{i'j}^+ + b_j} R_j^{(l+1)}
 \end{equation}
 
 Equation \eqref{eq:zplus} describes relevance distribution in fully connected layers. Here, $R_i^{(l)}$ and $R_j^{(l+1)}$ represent the relevance scores of neuron $i$ and $j$ in layers $(l)$ and $(l+1)$, respectively. $x_i$ represents the $i$th neuron's activation. $w_{ij}^+$ stands for the positive weights connecting the neurons $i$ and $j$ of layers $(l)$ and $(l+1)$.
 
-This formula is also know as the $z^+$-rule. Basically this formula describes that the contribution of a single neuron to the total activation mass of a layer is decisive for its relevance.
+This formula is also know as the $z^+$-rule. Basically, this formula describes that the contribution of a single neuron to the total activation mass of a deeper layer neuron is decisive for its relevance.
 
+### Relevance Computation
+
+For the actual implementation, relevance propagation as shown in Equation \eqref{eq:zplus} can be divided into four separate steps. This becomes obvious when Equation \eqref{eq:zplus} is rewritten as
+
+\begin{equation} \label{eq:lrp}
+    R_i^{(l)} = \color{orange}{\boxed{\color{black}{a_{i}} \color{blue}{\boxed{\color{black}{\sum_j w_{ij}}\color{lime}{\boxed{\color{black}{\frac{R_{j}^{(l+1)}}{\color{red}{\boxed{\color{black}{\sum_{i'} a_{i'} w_{i'j} + b_j}}}}}}}}}}}
+\end{equation}
+
+$\color{red}{\boxed{\text{Step 1}}}$
+
+The first step consists of a standard forward pass in which we compute the total preactivation mass flowing from all neurons in layer $(l)$ to neuron $k$ in layer $(l+1)$. Thus we calculate for every neuron in layer $(l)$:
+
+\begin{equation} \label{eq:step1}
+    \forall j: z_{j} = \sum_{i'} a_{i'} w_{i'j} + b_j
+\end{equation}
+
+$\color{green}{\boxed{\text{Step 2}}}$
+
+The second step consists of an element-wise division of relevance scores $R_{j}$ in layer $(l+1)$ by the preactivations $z_{j}$ computed in step 1. This step also ensures, that the relevance scores do not blow up while backpropagating the relevance scores and that the total relevance remains constant at 1. For every neuron in layer $(l)$ we compute:
+
+\begin{equation} \label{eq:step2}
+    \forall j: s_{j} = \frac{R_{j}^{(l+1)}}{z_{j}}
+\end{equation}
+
+$\color{blue}{\boxed{\text{Step 3}}}$
+
+Step three can be interpreted as a backward pass where the contributions of neuron $i$ in layer $(l)$ to the overall preactivation mass in layer $(l+1)$ is computed. For each neuron $j$ in layer $(l)$ we compute here:
+
+\begin{equation} \label{eq:step3}
+    \forall i: c_{i} = \sum_{j} w_{ij} s_{j}
+\end{equation}
+
+
+$\color{orange}{\boxed{\text{Step 4}}}$
+
+In the last step the contributions of each neuron $i$ in layer $(l)$ to all neurons $j$ in layer $(l+1)$ computed in step 3 is weighted by the neuron's activation $a_{i}$ in layer $(l)$. Thus, for each neuron $i$ in layer $(l)$ we compute the element-wise product
+
+\begin{equation} \label{eq:step4}
+    \forall i: R_{i}^{(l+1)} = a_{i} c_{i}
+\end{equation}
+
+### Relevance Propagation using Gradients
+
+"Step 3 can be computed as a gradient in the space of input activations where $s_{k}$ is treated as a constant. Such gradients can be computed efficiently via automatic differentiation" using PyTorch's autograd engine. This allows to backpropagate relevance scores even through more complex operations.
+
+ 
 <p align="center"> 
 <img src="/assets/images/post12/image_0.png" width="300">
 <img src="/assets/images/post12/image_1.png" width="300">
@@ -60,6 +108,8 @@ This formula is also know as the $z^+$-rule. Basically this formula describes th
 The presentation implementation of LRP is completely unsupervised. This means, that we do not use the input's ground truth label as the starting point for the relevance propagation. 
 
 At least in my tests, I found that starting relevance propagation from the true label (setting the class' output activation and therefore the relevance to 1) had virtually no effect on the resulting heatmap.
+
+For every layer in the original network, there exists a corresponding LRP layer.
 
 
 ## Relevance Filter
@@ -103,6 +153,8 @@ def relevance_filter(r: torch.tensor, top_k_percent: float = 1.0) -> torch.tenso
 ## Examples
 
 Some example images.
+
+Compare casle example with that of tutorial.
 
 ## Benchmark
 
