@@ -76,7 +76,6 @@ Step three can be interpreted as a backward pass where the contributions of neur
     \forall i: c_{i} = \sum_{j} w_{ij} s_{j}
 \end{equation}
 
-
 $\color{orange}{\boxed{\text{Step 4}}}$
 
 In the last step the contributions of each neuron $i$ in layer $(l)$ to all neurons $j$ in layer $(l+1)$ computed in step 3 is weighted by the neuron's activation $a_{i}$ in layer $(l)$. Thus, for each neuron $i$ in layer $(l)$ we compute the element-wise product
@@ -87,9 +86,23 @@ In the last step the contributions of each neuron $i$ in layer $(l)$ to all neur
 
 ### Relevance Propagation using Gradients
 
-"Step 3 can be computed as a gradient in the space of input activations where $s_{k}$ is treated as a constant. Such gradients can be computed efficiently via automatic differentiation" using PyTorch's autograd engine. This allows to backpropagate relevance scores even through more complex operations.
+Redistributing relevance scores from deeper to lower layers neurons can become somewhat inconvenient if during the forward pass more complex mappings such as convolutional operations took place. In such as case, decomposing the relevance scores would require special functions that cannot be implemented without greater effort. However, one can rewrite Equation \eqref{eq:step3} by expressing $c_{j}$ as an element of a gradient in the space of input activations $\mathbf{a}$ where $s_{k}$ is treated as a constant. Starting from Equation \eqref{eq:step3} we can write
 
- 
+$$
+\begin{equation}
+\begin{aligned} 
+\label{eq:step3Gradient}
+c_{i} &= \sum_{j} w_{ij} s_{j} \\
+& = \sum_{j} s_{j} \frac{\partial}{\partial a_{i}} \Big( \sum_{i'} a_{i'} w_{i'j} + b_{j} \Big)\\
+& = \frac{\partial}{\partial a_{i}} \sum_{j} s_{j} z_{j}(\mathbf{a}; \mathbf{w})\\
+& = \Big[\nabla \Big( \sum_{j} s_{j} z_{j}(\mathbf{a}; \mathbf{w}) \Big) \Big]_i
+\end{aligned}
+\end{equation}
+$$
+
+The gradient $\nabla f(\mathbf{a})$ from Equation \eqref{eq:step3Gradient} can be computed efficiently via automatic differentiation using PyTorch's autograd engine. Next, a brief example of relevance propagation through a linear layer will be used to demonstrate the equivalence of both methods. 
+
+
 <p align="center"> 
 <img src="/assets/images/post12/image_0.png" width="300">
 <img src="/assets/images/post12/image_1.png" width="300">
@@ -99,8 +112,8 @@ In the last step the contributions of each neuron $i$ in layer $(l)$ to all neur
 
 
 {:refdef: style="text-align: center;"}
-![](/assets/images/post8/lrp_network.png)
-{: refdef}
+![](/assets/images/post12/image_3.png)
+{:refdef}
 
 
 ## Implementation
