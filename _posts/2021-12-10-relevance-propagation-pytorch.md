@@ -3,7 +3,7 @@ layout: post
 title: "Relevance Propagation with PyTorch"
 ---
 
-**TL;DR**: A basic, unsupervised, yet reasonably fast implementation of Layer-wise Relevance Propagation (LRP) in PyTorch.
+**TL;DR**: This post covers a basic, unsupervised, yet reasonably fast implementation of Layer-wise Relevance Propagation (LRP) in PyTorch and a novel relevance filter for crisper and better relevance assignments.
 
 ---
 ## Introduction
@@ -21,14 +21,12 @@ Tutorial treats many layers differently and uses a bunch of hyperparameters. I'm
  
 I also added a novel relevance propagation filter to this implementation resulting in much crisper heat maps. If you want to use it, please don't forget to cite this implementation.
 
-
 <p align="center"> 
-<img src="/assets/images/post12/image_3.png" width="700"> 
+<img src="/assets/images/post12/image_3.png" width="500"> 
+<img src="/assets/images/post12/image_15.png" width="500"> 
 <br>
-<b>Figure 1:</b> An owl. </p>
-{: #fig:lrpBird}
-
-[Figure 1](#fig:lrpOwl) 
+<b>Figure 1:</b> Layer-wise relevance propagation highlights input features that were dicisive for the network's classification decision.
+</p>
 
 
 ## Method
@@ -229,12 +227,17 @@ With the addition of the relevance filter, which in this case only allowed the l
 
 The next images show more results for different categories.
 
-<p align="center"> 
-<img src="/assets/images/post12/image_0.png" width="300">
-<img src="/assets/images/post12/image_1.png" width="300">
-<img src="/assets/images/post12/image_2.png" width="300">
-<img src="/assets/images/post12/image_3.png" width="300">
-</p>
+![](/assets/images/post12/result_1.png)
+![](/assets/images/post12/result_2.png)
+![](/assets/images/post12/result_3.png)
+![](/assets/images/post12/result_4.png)
+![](/assets/images/post12/result_5.png)
+![](/assets/images/post12/result_6.png)
+![](/assets/images/post12/result_7.png)
+![](/assets/images/post12/result_8.png)
+![](/assets/images/post12/result_9.png)
+![](/assets/images/post12/result_10.png)
+![](/assets/images/post12/result_11.png)
 
 
 ## Benchmark
