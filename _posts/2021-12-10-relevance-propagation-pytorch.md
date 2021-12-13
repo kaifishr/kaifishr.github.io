@@ -99,8 +99,30 @@ c_{i} &= \sum_{j} w_{ij} s_{j} \\
 \end{equation}
 $$
 
-The gradient $\nabla f(\mathbf{a})$ from Equation \eqref{eq:step3Gradient} can be computed efficiently via automatic differentiation using PyTorch's autograd engine. Next, a brief example of relevance propagation through a linear layer will be used to demonstrate the equivalence of both methods. 
+The gradient $\nabla f(\mathbf{a})$ from Equation \eqref{eq:step3Gradient} can be computed efficiently via automatic differentiation using PyTorch's autograd engine. However, the downside of this convenient method is that it is not only much slower, but also resource-hungry compared to a direct implementation.
 
+The following code for relevance propagation through a linear layer can be used quickly to convice yourself of the equivalence of both methods. 
+
+```python
+def lrp_gradient(layer: torch.nn.Linear, a: torch.tensor, r: torch.tensor) -> torch.tensor:
+    eps = 1.0e-05
+    z = layer.forward(a) + eps
+    s = (r / z).data
+    (z * s).sum().backward()
+    c = a.grad
+    r = (a * c).data
+    return r
+```
+
+```python
+def lrp_manually(layer: torch.nn.Linear, a: torch.tensor, r: torch.tensor) -> torch.tensor:
+    eps = 1.0e-05
+    z = layer.forward(a) + eps
+    s = r / z
+    c = torch.mm(s, layer.weight)
+    r = (a * c).data
+    return r
+```
 
 ## Implementation
 
@@ -163,8 +185,9 @@ The code below shows how the idea was implemented in PyTorch.
 def relevance_filter(r: torch.tensor, top_k_percent: float = 1.0) -> torch.tensor:
     """Filter that allows largest k percent values to pass for each batch dimension.
 
-    Filter keeps k % of the largest entries of a tensor. All tensor elements are set to
-    zero except for the largest k % values.
+    Filter keeps largest k% entries of a tensor. All tensor elements are set to
+    zero except for the largest k % values. Here, k = 1 means that all relevance
+    scores are passed on to the next layer.
 
     Args:
         r: Tensor holding relevance scores of current layer.
@@ -187,7 +210,7 @@ def relevance_filter(r: torch.tensor, top_k_percent: float = 1.0) -> torch.tenso
         r.scatter_(dim=1, index=top_k.indices, src=top_k.values)
         return r.view(size)
     else:
-        return r
+        return 
 ```
 
 
@@ -223,10 +246,13 @@ Heatmaps generated with $z^+$-rule (left) and additional relevance filter (right
 
 On the left heatmap, it can be seen that compared to the reference heatmap, very similar areas have been marked as higly relevant for the network's classification decision.
 
-With the addition of the relevance filter, which in this case only allowed the largest 5 % of the relevance values to pass in each layer of the network, a significantly better focus of relevance on the castle becomes apparent. Other areas of the heatmap are almost completely black. Even previously highly activated areas, such as the traffic light in the bottom right corner, are now no longer relevant. The relevance filter thus allows significantly better statements on the relevance of objects in the image to the network's classification decision.
+With the addition of the relevance filter, which in this case only allowed the largest 5% of the relevance values to pass in each layer of the network, a significantly better focus of relevance on the castle becomes apparent. Other areas of the heatmap are almost completely black. Even previously highly activated areas, such as the traffic light in the bottom right corner, are now no longer relevant. The relevance filter thus allows significantly better statements on the relevance of objects in the image to the network's classification decision.
 
 The next images show more results for different categories.
 
+The heatmap in the middle was created with the $z^+$-rule without further modifications. For the heatmap on the right, an additional relevance filter was used, which suppressed out the 95% smallest relevance scores in each linear and convolutional layer.
+
+![](/assets/images/post12/result_0.png)
 ![](/assets/images/post12/result_1.png)
 ![](/assets/images/post12/result_2.png)
 ![](/assets/images/post12/result_3.png)
@@ -237,7 +263,6 @@ The next images show more results for different categories.
 ![](/assets/images/post12/result_8.png)
 ![](/assets/images/post12/result_9.png)
 ![](/assets/images/post12/result_10.png)
-![](/assets/images/post12/result_11.png)
 
 
 ## Benchmark
