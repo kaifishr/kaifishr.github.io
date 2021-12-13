@@ -14,7 +14,8 @@ Not long ago I posted an implementation for [Layer-wise Relevance Propagation wi
 
 This post presents a very basic and unsupervised implementation of Layer-wise Relevance Propagation ([Bach et al.][bach2015], [Montavon et al.][montavon2019]) in PyTorch for VGG networks from PyTorch's Model Zoo. Implementation is applicable to networks with ReLU activation functions.
 
-I used [this][montavon_gitlab] tutorial as a starting point for my implementation. I tried to make the code easy to understand but also easy to extend as this implementation is primarily intended to get you started with LRP.
+I used [this][montavon_gitlab] tutorial as a starting point for my implementation. I tried to make the code easy to understand as this implementation is primarily intended to get you started with LRP. I also focued a bit on modularity allowing the code to be easily extensible, which should help to use it for other projects.
+
 
 Tutorial treats many layers differently and uses a bunch of hyperparameters. I'm not a friend of hyperparamters. Therefore I implemented a version that comes without hyperparameters and that treats each layer equally.
  
@@ -103,26 +104,55 @@ $$
 The gradient $\nabla f(\mathbf{a})$ from Equation \eqref{eq:step3Gradient} can be computed efficiently via automatic differentiation using PyTorch's autograd engine. Next, a brief example of relevance propagation through a linear layer will be used to demonstrate the equivalence of both methods. 
 
 
-<p align="center"> 
-<img src="/assets/images/post12/image_0.png" width="300">
-<img src="/assets/images/post12/image_1.png" width="300">
-<img src="/assets/images/post12/image_2.png" width="300">
-<img src="/assets/images/post12/image_3.png" width="300">
-</p>
-
-
-{:refdef: style="text-align: center;"}
-![](/assets/images/post12/image_3.png)
-{:refdef}
-
-
 ## Implementation
 
 The presentation implementation of LRP is completely unsupervised. This means, that we do not use the input's ground truth label as the starting point for the relevance propagation. 
 
 At least in my tests, I found that starting relevance propagation from the true label (setting the class' output activation and therefore the relevance to 1) had virtually no effect on the resulting heatmap.
 
-For every layer in the original network, there exists a corresponding LRP layer.
+The creation of a LRP model is very simple. First the operations from the original network are parsed. This corresponds to the first half of our LRP model (see *lrp.py* in the repository). Then for each operation from the original model the corresponding LRP module (see *lrp_layers.py* in the repository) is added to the model in the reverse order.
+
+For every layer in the original network, there exists a corresponding LRP layer that inherits from the `nn.Module` class. Below I show exemplary the LRP counterpart of the convolution 2D layer.
+
+```python
+class RelevancePropagationConv2d(nn.Module):
+    """Layer-wise relevance propagation for 2D convolution.
+
+    Optionally modifies layer weights according to propagation rule. Here z^+-rule
+
+    Attributes:
+        layer: 2D convolutional layer.
+        eps: a value added to the denominator for numerical stability.
+
+    """
+
+    def __init__(self, layer: torch.nn.Conv2d, mode: str = "z_plus", eps: float = 1.0e-05) -> None:
+        super().__init__()
+
+        self.layer = layer
+
+        if mode == "z_plus":
+            self.layer.weight = torch.nn.Parameter(self.layer.weight.clamp(min=0.0))
+            self.layer.bias = torch.nn.Parameter(self.layer.bias.clamp(min=0.0))
+
+        self.eps = eps
+
+    def forward(self, a: torch.tensor, r: torch.tensor) -> torch.tensor:
+        z = self.layer.forward(a) + self.eps
+        s = (r / z).data
+        (z * s).sum().backward()
+        c = a.grad
+        r = (a * c).data
+        return relevance_filter(r, top_k_percent=0.05)
+```
+
+The generation of an LRP model then consists of only three lines of code:
+
+```python
+model = torchvision.models.vgg16(pretrained=True)
+lrp_model = LRPModel(model)
+r = lrp_model.forward(x)
+```
 
 
 ## Relevance Filter
@@ -163,11 +193,49 @@ def relevance_filter(r: torch.tensor, top_k_percent: float = 1.0) -> torch.tenso
 ```
 
 
-## Examples
+## Qualitative Results
 
+In this section, I'll briefly show a few results generated with the implementation presented in this post. In addition I want to quickly discuss the comparison between LRP with and without relevance filter.
 Some example images.
 
-Compare casle example with that of tutorial.
+For reference, I'll use the example image from [Montavon's tutorial][montavon_gitlab] that shows an old castle in the background of a busy street, with the corresponding LRP heatmap generated with several different relevance propagation rules and hyperparameters.
+
+<p align="center"> 
+<img src="/assets/images/post12/montavon_castle.png" width="300">
+<img src="/assets/images/post12/montavon_castle_lrp.png" width="300">
+<br>
+<b>Figure 2:</b> 
+Reference example from 
+<a href="https://git.tu-berlin.de/gmontavon/lrp-tutorial">Montavon's tutorial</a>.
+</p>
+{: #fig:lrpCastleMontavon}
+
+In [Figure 2](#fig:lrpCastleMontavon) we see that image regions associated with the Castle have been correctly identified as relevant for the network's prediction. We can also observe negative relevance scores (blue) that are associated with part of a roof or the traffic sign. These regions had a negative effect on the output neuron that is connected to the castle class.
+
+I have already mentioned, that I kept the implementation simple. So there is only one propagation rule, namely the $z^+$-rule that comes without any hyperparamters and that only generates positive relevance scores in the range between 0 and 1. In addition, the effect of my proposed relevance filter will be examined here as well. Let's see how this simple implementation performs in comparison.
+
+<p align="center"> 
+<img src="/assets/images/post12/castle_lrp.png" width="300">
+<img src="/assets/images/post12/castle_lrp_filter.png" width="300">
+<br>
+<b>Figure 3:</b>
+Heatmaps generated with $z^+$-rule (left) and additional relevance filter (right).
+</p>
+{: #fig:lrpCastle}
+
+On the left heatmap, it can be seen that compared to the reference heatmap, very similar areas have been marked as higly relevant for the network's classification decision.
+
+With the addition of the relevance filter, which in this case only allowed the largest 5 % of the relevance values to pass in each layer of the network, a significantly better focus of relevance on the castle becomes apparent. Other areas of the heatmap are almost completely black. Even previously highly activated areas, such as the traffic light in the bottom right corner, are now no longer relevant. The relevance filter thus allows significantly better statements on the relevance of objects in the image to the network's classification decision.
+
+The next images show more results for different categories.
+
+<p align="center"> 
+<img src="/assets/images/post12/image_0.png" width="300">
+<img src="/assets/images/post12/image_1.png" width="300">
+<img src="/assets/images/post12/image_2.png" width="300">
+<img src="/assets/images/post12/image_3.png" width="300">
+</p>
+
 
 ## Benchmark
 
