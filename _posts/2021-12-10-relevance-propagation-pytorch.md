@@ -236,10 +236,7 @@ As you can probably guess, the disadvantage of such a filter is that it is still
 
 ## Qualitative Results
 
-In this section, I'll briefly show a few results generated with the implementation presented in this post. In addition I want to quickly discuss the comparison between LRP with and without relevance filter.
-Some example images.
-
-For reference, I'll use the example image from [Montavon's tutorial][montavon_gitlab] that shows an old castle in the background of a busy street, with the corresponding LRP heatmap generated with several different relevance propagation rules and hyperparameters.
+In this section, I'll briefly show a few results generated with the implementation presented in this post. In addition, I want to compare layer-wise relevance propagation with and without relevance filter. As a baseline, I'll use the example image from [Montavon's tutorial][montavon_gitlab] showing an old castle in the background of a busy street, with the corresponding LRP heatmap generated with several different relevance propagation rules and hyperparameters.
 
 <p align="center"> 
 <img src="/assets/images/post12/montavon_castle.png" width="300">
@@ -253,7 +250,7 @@ Reference example from
 
 In [Figure 2](#fig:lrpCastleMontavon) we see that image regions associated with the Castle have been correctly identified as relevant for the network's prediction. We can also observe negative relevance scores (blue) that are associated with part of a roof or the traffic sign. These regions had a negative effect on the output neuron that is connected to the castle class.
 
-I have already mentioned, that I kept the implementation simple. So there is only one propagation rule, namely the $z^+$-rule that comes without any hyperparamters and that only generates positive relevance scores in the range between 0 and 1. In addition, the effect of my proposed relevance filter will be examined here as well. Let's see how this simple implementation performs in comparison.
+I have already mentioned, that I kept the implementation simple. So there is only one propagation rule, namely the $z^+$-rule that comes without any hyperparamters and only generates positive relevance scores in the range between 0 and 1. Let's see how this vanilla implementation performs in comparison without and with relevance filter.
 
 <p align="center"> 
 <img src="/assets/images/post12/castle_lrp.png" width="300">
@@ -264,13 +261,11 @@ Heatmaps generated with $z^+$-rule (left) and additional relevance filter (right
 </p>
 {: #fig:lrpCastle}
 
-On the left heatmap, it can be seen that compared to the reference heatmap, very similar areas have been marked as higly relevant for the network's classification decision.
+On the left heatmap, it can be seen that compared to the reference heatmap, very similar areas have been marked as higly relevant for the network's classification decision. However, it also appears that for this image, relevance scores are more widely distributed across the image.
 
-With the addition of the relevance filter, which in this case only allowed the largest 5% of the relevance values to pass in each layer of the network, a significantly better focus of relevance on the castle becomes apparent. Other areas of the heatmap are almost completely black. Even previously highly activated areas, such as the traffic light in the bottom right corner, are now no longer relevant. The relevance filter thus allows significantly better statements on the relevance of objects in the image to the network's classification decision.
-
-The next images show more results for different categories.
-
-The heatmap in the middle was created with the $z^+$-rule without further modifications. For the heatmap on the right, an additional relevance filter was used, which suppressed out the 95% smallest relevance scores in each linear and convolutional layer.
+Adding the relevance filter that allows only 5% of the largest relevance scores to propagation to the next layer of the network, a significantly better focus of relevance on the castle is visible. Other areas of the heatmap turn almost completely black with activated filter. Even previously highly activated areas, such as the traffic light in the bottom right corner, are no longer relevant.
+ 
+The following batch of images shows more results for different classes. The heatmap in the middle was created with the $z^+$-rule without further modifications. For the heatmap on the right, a relevance filter has been added suppressing 95% of the smallest relevance scores in each linear and convolutional layer.
 
 ![](/assets/images/post12/result_0.png)
 ![](/assets/images/post12/result_1.png)
@@ -287,12 +282,14 @@ The heatmap in the middle was created with the $z^+$-rule without further modifi
 
 ## Benchmark
 
-This LRP implementation is already reasonably fast. It should therefore also be possible to use this code in projects where it is intended to work in real time. Without relevance filter and with an RTX 2080 Ti graphics card I reach 53 FPS with the VGG-16.
+This LRP implementation is already reasonably fast. It should therefore also be possible to use this code in projects where it is intended to work in real time. Without relevance filter I got 53 FPS with the VGG-16 on an RTX 2080 Ti graphics card.
 
 
-## Outlook
+## Discussion and Outlook
 
-There are some open points how the implementation can be further imporved. First, the implementation should be more model agnostic. Here, implementing all network operations using the gradient trick would be an important step in this direction.Second, one would have to think about how to get a list with the activations of all operations of the original network. I tried using forward hooks but was not able to extract the activations if a torch function such as `torch.relu`, `torch.flatten`, etc., was called during the forward pass.
+The results show that adding a simple relevance filter can help to create better looking heatmaps that allow to make significantly better statements on the relevance of objects in the image.
+
+There are some open points how the implementation can be further imporved. First, the implementation should be more model agnostic. Here, implementing all network operations using the gradient trick would be an important step in this direction. Second, one would have to think about how to get a list with the activations of all operations of the original network. I tried using forward hooks but was not able to extract the activations if a torch function such as `torch.relu`, `torch.flatten`, etc., was called during the forward pass.
 
 
 ## Citation
