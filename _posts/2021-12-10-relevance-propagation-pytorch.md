@@ -144,15 +144,10 @@ def lrp_manually(layer: torch.nn.Linear, a: torch.tensor, r: torch.tensor) -> to
 
 In my tests with an RTX 2080 Ti and a linear layer mapping from 512 to 256 features the gradient-based approach was about five times slower.
 
+
 ## Implementation
 
-The presentation implementation of LRP is completely unsupervised. This means, that we do not use the input's ground truth label as the starting point for the relevance propagation. 
-
-At least in my tests, I found that starting relevance propagation from the true label (setting the class' output activation and therefore the relevance to 1) had virtually no effect on the resulting heatmap.
-
-The creation of a LRP model is very simple. First the operations from the original network are parsed. This corresponds to the first half of our LRP model (see *lrp.py* in the repository). Then for each operation from the original model the corresponding LRP module (see *lrp_layers.py* in the repository) is added to the model in the reverse order.
-
-For every layer in the original network, there exists a corresponding LRP layer that inherits from the `nn.Module` class. Below I show exemplary the LRP counterpart of the convolution 2D layer.
+To generate an LRP model, the first step is to parse the original network's operations. These operations create the first part of the LRP model. Then for each layer of the original model the corresponding LRP layer is added to the LRP model in reverse order. Thus, for every layer in the original network, there exists a corresponding LRP layer that inherits from the `nn.Module` class. Below I show exemplary the LRP counterpart of the convolution 2D layer.
 
 ```python
 class RelevancePropagationConv2d(nn.Module):
@@ -173,7 +168,7 @@ class RelevancePropagationConv2d(nn.Module):
 
         if mode == "z_plus":
             self.layer.weight = torch.nn.Parameter(self.layer.weight.clamp(min=0.0))
-            self.layer.bias = torch.nn.Parameter(self.layer.bias.clamp(min=0.0))
+            self.layer.bias = torch.nn.Parameter(torch.zeros_like(self.layer.bias))
 
         self.eps = eps
 
@@ -183,16 +178,18 @@ class RelevancePropagationConv2d(nn.Module):
         (z * s).sum().backward()
         c = a.grad
         r = (a * c).data
-        return relevance_filter(r, top_k_percent=0.05)
+        return relevance_filter(r, top_k_percent=1.0)
 ```
 
-The generation of an LRP model then consists of only three lines of code:
+Generating the actual LRP model then consists of only three lines of code:
 
 ```python
 model = torchvision.models.vgg16(pretrained=True)
 lrp_model = LRPModel(model)
 r = lrp_model.forward(x)
 ```
+
+The presented implementation for relevance propagation is completely unsupervised. This means, that we do not use the input's ground truth label as the starting point for the relevance propagation. At least in my tests, I found that starting relevance propagation from the true label (i.e., setting the class' output activation and therefore the relevance to 1) had no significant effect on the resulting heatmap.
 
 
 ## Relevance Filter
