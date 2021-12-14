@@ -194,9 +194,11 @@ The presented implementation for relevance propagation is completely unsupervise
 
 ## Relevance Filter
 
-I have found that a very effective way of directing relevance scores to important features in input space is by using a filter that allows only the highest k % of relevance scores to pass to the next layer. Such a filter method results in much crisper heatmaps supporting the idea of suppressing very small and therefore noisy relevance scores. However, sorting the relevance scores can make this filter very expensive. Especially for convolutional layers.
+I have found that a very effective way of directing relevance scores to important features in input space is by using a filter that allows only the *k*% largest relevance scores to propagate to the next layer.
 
-The code below shows how the idea was implemented in PyTorch.
+The idea for a relevance filter came from the assumption that a part of the activation signal and thus also the relevance signal are noise. The hypothesis is then that noise is more likely to be associated with small activation or relevance values. Thus, by filtering out small relevance values, the resulting heatmap should also become more focused on relevant features leading to much crisper heatmaps.
+
+The code below shows the idea of a relevance filter implemented in PyTorch.
 
 ```python
 def relevance_filter(r: torch.tensor, top_k_percent: float = 1.0) -> torch.tensor:
@@ -227,9 +229,10 @@ def relevance_filter(r: torch.tensor, top_k_percent: float = 1.0) -> torch.tenso
         r.scatter_(dim=1, index=top_k.indices, src=top_k.values)
         return r.view(size)
     else:
-        return 
+        return r
 ```
 
+As you can probably guess, the disadvantage of such a filter is that it is still relatively expensive due to the sorting of all relevance values. This is especially pronounced for convolutional layers, which can have a large number of activations.
 
 ## Qualitative Results
 
