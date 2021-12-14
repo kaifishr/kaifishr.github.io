@@ -3,29 +3,25 @@ layout: post
 title: "Relevance Propagation with PyTorch"
 ---
 
-**TL;DR**: This post covers a basic, unsupervised, yet reasonably fast implementation of Layer-wise Relevance Propagation (LRP) in PyTorch and a novel relevance filter for crisper and better relevance assignments.
+**TL;DR**: This post covers a basic, unsupervised, yet reasonably fast implementation of Layer-wise Relevance Propagation (LRP) in PyTorch and a novel relevance filter for crisper heatmaps.
 
 ---
+
 ## Introduction
 
-Layer-wise relevance propagation is a simple but powerful method that helps us to better understand the relevance of input features on the network's classification decision.
+Layer-wise relevance propagation ([Bach et al.][bach2015], [Montavon et al.][montavon2019]) or just LRP is a simple but powerful method that helps us to better understand the relevance of input features on the network's classification decision. Not long ago I posted an implementation for [Layer-wise Relevance Propagation with Tensorflow][lrp_tensorflow] on my blog where I also went into some of the theoretical underpinnings of LRP.
 
-Not long ago I posted an implementation for [Layer-wise Relevance Propagation with Tensorflow][lrp_tensorflow] on my blog where I also went into some of the theoretical underpinnings of LRP.
+This post presents a very basic and unsupervised implementation of LRP in PyTorch for VGG networks from PyTorch's Model Zoo. I also added a novel relevance propagation filter to this implementation resulting in much crisper heatmaps and far better relevance assignment. To the best of my knowledge, this method has not been published before. If you want to use it, please don't forget to cite this post.
 
-This post presents a very basic and unsupervised implementation of Layer-wise Relevance Propagation ([Bach et al.][bach2015], [Montavon et al.][montavon2019]) in PyTorch for VGG networks from PyTorch's Model Zoo. Implementation is applicable to networks with ReLU activation functions.
+I have used [this][montavon_gitlab] tutorial as well as two publications from [Bach et al.][bach2015] and [Montavon et al.][montavon2019] as a starting point for my implementation. Both, the tutorial and the publications perform relevance propagation differently depending on the position of a layer in the network. There are also several hyperparameters involved depending on which rule is used to redistribute the relevance scores. 
 
-I used [this][montavon_gitlab] tutorial as a starting point for my implementation. I tried to make the code easy to understand as this implementation is primarily intended to get you started with LRP. I also focued a bit on modularity allowing the code to be easily extensible, which should help to use it for other projects.
-
-
-Tutorial treats many layers differently and uses a bunch of hyperparameters. I'm not a friend of hyperparamters. Therefore I implemented a version that comes without hyperparameters and that treats each layer equally.
- 
-I also added a novel relevance propagation filter to this implementation resulting in much crisper heat maps. If you want to use it, please don't forget to cite this implementation.
+As I'm not a friend of hyperparamters, I implemented a version that comes without hyperparameters and where relevance scores are decomposed according to a single rule. I tried to make the code easy to understand as this implementation is primarily intended to get you started with LRP. I also focued a bit on modularity allowing the code to be easily extensible, which should help to use it for other projects.
 
 <p align="center"> 
 <img src="/assets/images/post12/image_3.png" width="500"> 
 <img src="/assets/images/post12/image_15.png" width="500"> 
 <br>
-<b>Figure 1:</b> Layer-wise relevance propagation highlights input features that were dicisive for the network's classification decision.
+<b>Figure 1:</b> Layer-wise relevance propagation highlights input features that were dicisive for the network's classification decision. It looks like that the network has learned to associate the animal's eyes / face with the corresponding class.
 </p>
 
 
