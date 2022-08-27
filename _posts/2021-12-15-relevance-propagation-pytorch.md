@@ -292,9 +292,9 @@ There are some open points how the implementation can be further imporved. First
 ## Citation
 
 ```bibtex
-@misc{blogpost,
+@misc{Fischer2021rpp,
   title={Relevance Propagation with PyTorch},
-  author={Fabi, Kai},
+  author={Fischer, Kai},
   howpublished={\url{https://kaifabi.github.io/2021/12/15/relevance-propagation-pytorch.html}},
   year={2021}
 }

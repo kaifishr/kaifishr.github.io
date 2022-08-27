@@ -277,9 +277,9 @@ In a next step, this method should be applied to a larger machine learning model
 ---
 
 ```bibtex
-@misc{blogpost,
+@misc{Fischer2020alrm,
   title={An Adaptive Learning Rate Method for Gradient Descent Algorithms},
-  author={Fabi, Kai},
+  author={Fischer, Kai},
   howpublished={\url{https://kaifabi.github.io/2020/12/18/adaptive-learning-rate-method.html}},
   year={2020}
 }

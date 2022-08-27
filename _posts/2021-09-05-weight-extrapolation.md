@@ -567,9 +567,9 @@ In this post I described a method that allows to leverage the information stored
 ---
 
 ```bibtex
-@misc{blogpost,
+@misc{Fischer2021we,
   title={Gradient-based Weight Extrapolation},
-  author={Fabi, Kai},
+  author={Fischer, Kai},
   howpublished={\url{https://kaifabi.github.io/2021/09/05/weight-extrapolation.html}},
   year={2021}
 }

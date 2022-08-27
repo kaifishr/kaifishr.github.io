@@ -357,9 +357,9 @@ I hope to see future studies where subnetworks are used in much larger networks,
 ---
 
 ```bibtex
-@misc{blogpost,
+@misc{Fischer2021laf,
   title={Subnetworks as Trainable Activation Functions},
-  author={Fabi, Kai},
+  author={Fischer, Kai},
   howpublished={\url{https://kaifabi.github.io/2021/02/02/learning-activation-functions.html}},
   year={2021}
 }
