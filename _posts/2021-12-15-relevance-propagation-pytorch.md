@@ -295,7 +295,7 @@ There are some open points how the implementation can be further imporved. First
 @misc{Fischer2021rpp,
   title={Relevance Propagation with PyTorch},
   author={Fischer, Kai},
-  howpublished={\url{https://kaifischer.github.io/2021/12/15/relevance-propagation-pytorch.html}},
+  howpublished={\url{https://kaifishr.github.io/2021/12/15/relevance-propagation-pytorch.html}},
   year={2021}
 }
 ```
@@ -311,4 +311,4 @@ You find the code for this project [here][github_code].
 [montavon2019]: https://link.springer.com/chapter/10.1007%2F978-3-030-28954-6_10
 [montavon_gitlab]: https://git.tu-berlin.de/gmontavon/lrp-tutorial
 [github_code]: https://github.com/kaifishr/PyTorchRelevancePropagation
-[lrp_tensorflow]: https://kaifischer.github.io/2021/01/20/layer-wise-relevance-propagation.html
+[lrp_tensorflow]: https://kaifishr.github.io/2021/01/20/layer-wise-relevance-propagation.html

@@ -267,7 +267,7 @@ Check out my [code][genetic-nn-training] on Github!
 
 <!-- Links -->
 [genetic-nn-training]:  https://github.com/kaifishr/GeneticNeuralNetworkTraining
-[genetic-classifier]:   https://kaifischer.github.io/2020/01/17/train-a-simple-classifier-using-a-genetic-algorithm.html
+[genetic-classifier]:   https://kaifishr.github.io/2020/01/17/train-a-simple-classifier-using-a-genetic-algorithm.html
 [Kaiming-Init]:         https://arxiv.org/pdf/1502.01852.pdf
 [Montana1989]:          https://www.ijcai.org/Proceedings/89-1/Papers/122.pdf
 

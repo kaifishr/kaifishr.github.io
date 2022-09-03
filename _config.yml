@@ -1,4 +1,4 @@
-title: kaifischer.github.io
+title: kaifishr.github.io
 
 author: 
     name: Kai Fischer
@@ -10,7 +10,7 @@ description: >- # this means to ignore newlines until "baseurl:"
 show_excerpts: false
 
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://kaifischer.github.io" # the base hostname & protocol for your site
+url: "http://kaifishr.github.io" # the base hostname & protocol for your site
 github_username: kaifischer
 twitter_username: eigenkai
 
@@ -18,7 +18,7 @@ minima:
     date_format: "%b %-d, %Y"
     social_links:
         twitter: eigenkai 
-        github: kaifischer
+        github: kaifishr
 
 theme: minima
 

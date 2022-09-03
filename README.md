@@ -1,3 +1,3 @@
-# kaifischer.github.io
+# kaifishr.github.io
 
-This is my [blog](https://kaifischer.github.io/). Uses [Jekyll](http://jekyllrb.com/).
+This is my [blog](https://kaifishr.github.io/). Uses [Jekyll](http://jekyllrb.com/).

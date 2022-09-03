@@ -570,7 +570,7 @@ In this post I described a method that allows to leverage the information stored
 @misc{Fischer2021we,
   title={Gradient-based Weight Extrapolation},
   author={Fischer, Kai},
-  howpublished={\url{https://kaifischer.github.io/2021/09/05/weight-extrapolation.html}},
+  howpublished={\url{https://kaifishr.github.io/2021/09/05/weight-extrapolation.html}},
   year={2021}
 }
 ```

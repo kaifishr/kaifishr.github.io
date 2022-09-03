@@ -421,7 +421,7 @@ This blog post introduced a grid-based neural network architecture. Neural grids
 @misc{Fischer2021gnn,
   title={NeuralGrid: A Grid-based Neural Network},
   author={Fischer, Kai},
-  howpublished={\url{https://kaifischer.github.io/2021/04/06/neural-grid.html}},
+  howpublished={\url{https://kaifishr.github.io/2021/04/06/neural-grid.html}},
   year={2021}
 }
 ```

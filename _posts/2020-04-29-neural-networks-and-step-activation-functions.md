@@ -206,5 +206,5 @@ You find the [code][gnn-github] for this project on Github. Check out my other p
 
 <!-- Links -->
 [gnn-github]: https://github.com/kaifishr/GeneticNeuralNetworkTraining
-[gnn-blog]: https://kaifischer.github.io/2020/04/18/training-neural-networks-using-genetic-algorithms.html
-[genetic-classifier-blog]: https://kaifischer.github.io/2020/01/17/train-a-simple-classifier-using-a-genetic-algorithm.html
+[gnn-blog]: https://kaifishr.github.io/2020/04/18/training-neural-networks-using-genetic-algorithms.html
+[genetic-classifier-blog]: https://kaifishr.github.io/2020/01/17/train-a-simple-classifier-using-a-genetic-algorithm.html
