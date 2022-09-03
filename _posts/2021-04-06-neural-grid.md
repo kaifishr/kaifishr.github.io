@@ -418,10 +418,10 @@ This blog post introduced a grid-based neural network architecture. Neural grids
 ---
 
 ```bibtex
-@misc{blogpost,
+@misc{Fischer2021gnn,
   title={NeuralGrid: A Grid-based Neural Network},
-  author={Fabi, Kai},
-  howpublished={\url{https://kaifabi.github.io/2021/04/06/neural-grid.html}},
+  author={Fischer, Kai},
+  howpublished={\url{https://kaifischer.github.io/2021/04/06/neural-grid.html}},
   year={2021}
 }
 ```
@@ -431,4 +431,4 @@ You find the code for this project [here][github_code].
 <!-- Links -->
 
 [glorot2010]: http://proceedings.mlr.press/v9/glorot10a.html
-[github_code]: https://github.com/KaiFabi/NeuralGrid
+[github_code]: https://github.com/kaifishr/NeuralGrid

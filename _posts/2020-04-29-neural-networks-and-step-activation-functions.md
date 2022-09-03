@@ -205,6 +205,6 @@ The results show that simple neural networks equipped with step activation funct
 You find the [code][gnn-github] for this project on Github. Check out my other posts on genetic optimization: [here][gnn-blog] and [here][genetic-classifier-blog].
 
 <!-- Links -->
-[gnn-github]: https://github.com/KaiFabi/GeneticNeuralNetworkTraining
-[gnn-blog]: https://kaifabi.github.io/2020/04/18/training-neural-networks-using-genetic-algorithms.html
-[genetic-classifier-blog]: https://kaifabi.github.io/2020/01/17/train-a-simple-classifier-using-a-genetic-algorithm.html
+[gnn-github]: https://github.com/kaifishr/GeneticNeuralNetworkTraining
+[gnn-blog]: https://kaifischer.github.io/2020/04/18/training-neural-networks-using-genetic-algorithms.html
+[genetic-classifier-blog]: https://kaifischer.github.io/2020/01/17/train-a-simple-classifier-using-a-genetic-algorithm.html

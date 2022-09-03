@@ -280,7 +280,7 @@ In a next step, this method should be applied to a larger machine learning model
 @misc{Fischer2020alrm,
   title={An Adaptive Learning Rate Method for Gradient Descent Algorithms},
   author={Fischer, Kai},
-  howpublished={\url{https://kaifabi.github.io/2020/12/18/adaptive-learning-rate-method.html}},
+  howpublished={\url{https://kaifischer.github.io/2020/12/18/adaptive-learning-rate-method.html}},
   year={2020}
 }
 ```
@@ -291,4 +291,4 @@ You find the code for this project [here][github_code].
 
 [numerical_differentiation]: https://en.wikipedia.org/wiki/Numerical_differentiation
 [test_functions]: https://en.wikipedia.org/wiki/Test_functions_for_optimization
-[github_code]: https://github.com/KaiFabi/AdaptiveLearningRate
+[github_code]: https://github.com/kaifishr/AdaptiveLearningRate

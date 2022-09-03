@@ -570,7 +570,7 @@ In this post I described a method that allows to leverage the information stored
 @misc{Fischer2021we,
   title={Gradient-based Weight Extrapolation},
   author={Fischer, Kai},
-  howpublished={\url{https://kaifabi.github.io/2021/09/05/weight-extrapolation.html}},
+  howpublished={\url{https://kaifischer.github.io/2021/09/05/weight-extrapolation.html}},
   year={2021}
 }
 ```
@@ -578,7 +578,7 @@ In this post I described a method that allows to leverage the information stored
 You find the code for this project [here][github_code].
 
 <!-- Links -->
-[github_code]: https://github.com/KaiFabi/WeightExtrapolation
+[github_code]: https://github.com/kaifishr/WeightExtrapolation
 [wiki_BDF]: ttps://en.wikipedia.org/wiki/Backward_differentiation_formula
 [wiki_FD]: https://en.wikipedia.org/wiki/Finite_difference
 [wiki_difference_quotient]: https://en.wikipedia.org/wiki/Difference_quotient

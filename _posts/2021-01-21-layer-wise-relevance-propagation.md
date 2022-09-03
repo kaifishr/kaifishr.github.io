@@ -187,5 +187,5 @@ You find the code for this project [here][github_code].
 [lrp_paper_1]: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0130140
 [lrp_paper_2]: https://www.sciencedirect.com/science/article/pii/S0031320316303582
 [lrp_paper_3]: https://arxiv.org/abs/1509.06321
-[RealTimeLRP]: https://github.com/KaiFabi/RealTimeRelevancePropagation
-[github_code]: https://github.com/KaiFabi/LayerwiseRelevancePropagation
+[RealTimeLRP]: https://github.com/kaifishr/RealTimeRelevancePropagation
+[github_code]: https://github.com/kaifishr/LayerwiseRelevancePropagation

@@ -266,8 +266,8 @@ Simple deep neural networks can be trained using genetic algorithms. The results
 Check out my [code][genetic-nn-training] on Github!
 
 <!-- Links -->
-[genetic-nn-training]:  https://github.com/KaiFabi/GeneticNeuralNetworkTraining
-[genetic-classifier]:   https://kaifabi.github.io/2020/01/17/train-a-simple-classifier-using-a-genetic-algorithm.html
+[genetic-nn-training]:  https://github.com/kaifishr/GeneticNeuralNetworkTraining
+[genetic-classifier]:   https://kaifischer.github.io/2020/01/17/train-a-simple-classifier-using-a-genetic-algorithm.html
 [Kaiming-Init]:         https://arxiv.org/pdf/1502.01852.pdf
 [Montana1989]:          https://www.ijcai.org/Proceedings/89-1/Papers/122.pdf
 

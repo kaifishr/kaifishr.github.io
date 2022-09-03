@@ -360,7 +360,7 @@ I hope to see future studies where subnetworks are used in much larger networks,
 @misc{Fischer2021laf,
   title={Subnetworks as Trainable Activation Functions},
   author={Fischer, Kai},
-  howpublished={\url{https://kaifabi.github.io/2021/02/02/learning-activation-functions.html}},
+  howpublished={\url{https://kaifischer.github.io/2021/02/02/learning-activation-functions.html}},
   year={2021}
 }
 ```
@@ -369,5 +369,5 @@ You find the code for this project [here][github_subnetwork].
 
 <!-- Links -->
 
-[github_subnetwork]: https://github.com/KaiFabi/SubnetworkActivationFunctions
+[github_subnetwork]: https://github.com/kaifishr/SubnetworkActivationFunctions
 [MinLin2014]: https://arxiv.org/abs/1312.4400

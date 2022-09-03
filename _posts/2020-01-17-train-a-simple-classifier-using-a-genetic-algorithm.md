@@ -106,7 +106,7 @@ The complete code of the project can be found [here][genetic-neural-networks].
 <!-- Links -->
 [MNIST]:                    http://yann.lecun.com/exdb/mnist/
 [Fashion-MNIST]:            https://github.com/zalandoresearch/fashion-mnist/tree/master/data/fashion
-[genetic-neural-networks]:  https://github.com/KaiFabi/VanillaGeneticClassifier
+[genetic-neural-networks]:  https://github.com/kaifishr/VanillaGeneticClassifier
 [fashion-mnist-benchmarks]: http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/
 [mnist-benchmarks]:         https://towardsdatascience.com/logistic-regression-using-python-sklearn-numpy-mnist-handwriting-recognition-matplotlib-a6b31e2b166a
 
