@@ -1,8 +1,8 @@
 title: kaifishr.github.io
 
 author: 
-    name: Kai Fischer
-    email: str('kaifabi')+'@'+'.'.join(['posteo','net'])
+    name:
+    email:
 
 description: >- # this means to ignore newlines until "baseurl:"
     Thoughts from former stardust.
@@ -11,8 +11,8 @@ show_excerpts: false
 
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://kaifishr.github.io" # the base hostname & protocol for your site
-github_username: kaifischer
-twitter_username: eigenkai
+github_username: kaifisher
+twitter_username: fishrkai
 
 minima:
     date_format: "%b %-d, %Y"
