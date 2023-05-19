@@ -17,7 +17,7 @@ twitter_username: fishrkai
 minima:
     date_format: "%b %-d, %Y"
     social_links:
-        twitter: eigenkai 
+        twitter: fishrkai
         github: kaifishr
 
 theme: minima
